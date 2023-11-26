@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "378749629357",
+    "project_id": "whatsappstatussaver-eba36",
+    "storage_bucket": "whatsappstatussaver-eba36.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:378749629357:android:95e5c598482c26cf6c2724",
+        "android_client_info": {
+          "package_name": "com.peterchege.statussaver"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAFzp-pTeLwngNXhj4ac6FAHjoVWd9dN-0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -5,6 +5,7 @@ plugins {
     id ("org.jetbrains.kotlin.jvm") version "1.9.20"
     id("com.google.devtools.ksp") version "1.9.20-1.0.14"
     id("com.diffplug.spotless") version "5.3.0"
+    id("com.google.gms.google-services") version "4.4.0" apply false
 }
 
 subprojects{
