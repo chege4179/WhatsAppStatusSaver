@@ -16,6 +16,7 @@
 package com.peterchege.statussaver.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -25,13 +26,13 @@ import com.peterchege.statussaver.ui.screens.saved.SavedMediaScreen
 import com.peterchege.statussaver.ui.screens.videos.AllVideosScreen
 
 @Composable
-fun AppNavigation() {
-    val navHostController = rememberNavController()
+fun AppNavigation(navHostController: NavHostController) {
+
 
     NavHost(
         navController = navHostController,
         startDestination = Screens.ALL_WHATSAPP_IMAGES_SCREEN
-    ){
+    ) {
         composable(
             route = Screens.ALL_WHATSAPP_IMAGES_SCREEN
         ) {

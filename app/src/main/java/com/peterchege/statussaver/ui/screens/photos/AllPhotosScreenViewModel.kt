@@ -15,5 +15,25 @@
  */
 package com.peterchege.statussaver.ui.screens.photos
 
-class AllPhotosScreenViewModel {
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.peterchege.statussaver.domain.repos.WhatsAppImagesRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.stateIn
+import java.io.File
+import javax.inject.Inject
+
+@HiltViewModel
+class AllPhotosScreenViewModel @Inject constructor(
+    private val imagesRepository: WhatsAppImagesRepository,
+): ViewModel() {
+
+    val images = flow<List<File>> { imagesRepository.getAllWhatsAppImagesTrial() }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000L),
+            initialValue = emptyList()
+        )
 }

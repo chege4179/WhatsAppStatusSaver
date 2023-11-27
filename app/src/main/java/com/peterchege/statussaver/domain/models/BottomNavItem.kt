@@ -13,18 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.peterchege.statussaver.core.utils
+package com.peterchege.statussaver.domain.models
 
-import android.os.Build
+import androidx.compose.ui.graphics.vector.ImageVector
 
-inline fun <T> sdk29AndUp(onSdk29: () -> T): T? {
-    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-        onSdk29()
-    } else null
-}
+data class BottomNavItem(
+    val name: String,
+    val route: String,
+    val icon: ImageVector,
+    val badgeCount: Int = 0,
 
-fun getRequiredPermissions(below29: List<String>, above29: List<String>): List<String> {
-    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        above29
-    } else below29
-}
+    )

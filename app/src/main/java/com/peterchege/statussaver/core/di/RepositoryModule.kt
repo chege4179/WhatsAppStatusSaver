@@ -15,5 +15,28 @@
  */
 package com.peterchege.statussaver.core.di
 
+import android.content.Context
+import com.peterchege.statussaver.data.WhatsAppImagesRepositoryImpl
+import com.peterchege.statussaver.domain.repos.WhatsAppImagesRepository
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineDispatcher
+import javax.inject.Singleton
+
+
+@Module
+@InstallIn(SingletonComponent::class)
 object RepositoryModule {
+
+    @Singleton
+    @Provides
+    fun provideWhatsAppImagesRepository(
+        @IoDispatcher ioDispatcher: CoroutineDispatcher,
+        @ApplicationContext context: Context
+    ): WhatsAppImagesRepository {
+        return WhatsAppImagesRepositoryImpl(ioDispatcher = ioDispatcher, appContext = context)
+    }
 }

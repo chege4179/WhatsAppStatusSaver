@@ -25,13 +25,23 @@ import com.peterchege.statussaver.domain.repos.WhatsAppImagesRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
+import java.io.File
 import javax.inject.Inject
 
 //  WhatsApp/Media/.Statuses
-class WhatsAppImagesRepository @Inject constructor(
+class WhatsAppImagesRepositoryImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     @ApplicationContext private val appContext: Context,
 ) : WhatsAppImagesRepository {
+
+
+    override suspend fun getAllWhatsAppImagesTrial(): List<File> {
+        return withContext(ioDispatcher){
+            val folderPath = "/WhatsApp/Media/.Statuses"
+            return@withContext readFilesFromDirectory(folderPath)
+        }
+
+    }
 
     override suspend fun getAllWhatsAppImages(): List<WhatsAppPhoto> {
         return withContext(ioDispatcher) {
@@ -82,5 +92,19 @@ class WhatsAppImagesRepository @Inject constructor(
             } ?: listOf()
         }
 
+    }
+
+
+
+    fun readFilesFromDirectory(directoryPath: String): List<File> {
+        val directory = File(directoryPath)
+
+        return if (directory.exists() && directory.isDirectory) {
+            // List all files in the directory
+            directory.listFiles()?.toList() ?: emptyList()
+        } else {
+            // Handle the case where the directory doesn't exist or is not a directory
+            emptyList()
+        }
     }
 }
