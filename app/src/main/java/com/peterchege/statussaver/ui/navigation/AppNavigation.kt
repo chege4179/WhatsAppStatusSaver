@@ -15,40 +15,34 @@
  */
 package com.peterchege.statussaver.ui.navigation
 
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.peterchege.statussaver.core.utils.Constants
 import com.peterchege.statussaver.core.utils.Screens
 import com.peterchege.statussaver.ui.screens.photos.AllPhotosScreen
 import com.peterchege.statussaver.ui.screens.saved.SavedMediaScreen
+import com.peterchege.statussaver.ui.screens.video.VideoScreen
 import com.peterchege.statussaver.ui.screens.videos.AllVideosScreen
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppNavigation(navHostController: NavHostController) {
 
-
     NavHost(
         navController = navHostController,
-        startDestination = Screens.ALL_WHATSAPP_IMAGES_SCREEN
-    ) {
-        composable(
-            route = Screens.ALL_WHATSAPP_IMAGES_SCREEN
-        ) {
-            AllPhotosScreen()
+        startDestination = Screens.BOTTOM_NAVIGATION
+    ){
+        composable(route = Screens.BOTTOM_NAVIGATION){
+            BottomNavigation(navHostController = navHostController)
         }
-        composable(
-            route = Screens.ALL_WHATSAPP_VIDEOS_SCREEN
-        ) {
-            AllVideosScreen()
+        composable(route = Screens.VIDEO_SCREEN + "/{videoName}"){
+            VideoScreen()
         }
 
-        composable(
-            route = Screens.ALL_SAVED_MEDIA_SCREEN
-        ) {
-            SavedMediaScreen()
-
-        }
     }
+
 }

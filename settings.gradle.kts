@@ -15,4 +15,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "WhatsAppStatusSaver"
 include(":app")
- 
+include(":benchmark")

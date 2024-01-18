@@ -35,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.core.app.ActivityCompat
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.peterchege.statussaver.ui.navigation.AppNavigation
 import com.peterchege.statussaver.ui.navigation.BottomNavigation
 import com.peterchege.statussaver.ui.theme.WhatsAppStatusSaverTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -105,7 +106,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val navHostController = rememberNavController()
-                    BottomNavigation(navHostController = navHostController)
+                    AppNavigation(navHostController = navHostController)
                 }
             }
         }

@@ -37,10 +37,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.peterchege.statussaver.core.utils.Screens
 import com.peterchege.statussaver.domain.models.BottomNavItem
+import com.peterchege.statussaver.ui.screens.photos.AllPhotosScreen
+import com.peterchege.statussaver.ui.screens.saved.SavedMediaScreen
+import com.peterchege.statussaver.ui.screens.videos.AllVideosScreen
 
 @ExperimentalMaterial3Api
 @Composable
@@ -75,6 +80,7 @@ fun BottomNavBar(
 fun BottomNavigation(
     navHostController: NavHostController,
 ) {
+    val navController = rememberNavController()
     Scaffold(
         bottomBar = {
             BottomNavBar(
@@ -97,9 +103,11 @@ fun BottomNavigation(
                     )
 
                 ),
-                navController = navHostController,
+                navController = navController,
                 onItemClick = {
-                    navHostController.navigate(it.route)
+                    navController.navigate(it.route) {
+                        launchSingleTop = true
+                    }
                 }
             )
         }
@@ -109,7 +117,32 @@ fun BottomNavigation(
                 .background(Color.LightGray)
                 .padding(innerPadding)
         ) {
-            AppNavigation(navHostController = navHostController)
+            NavHost(
+                navController = navController,
+                startDestination = Screens.ALL_WHATSAPP_IMAGES_SCREEN
+            ) {
+                composable(
+                    route = Screens.ALL_WHATSAPP_IMAGES_SCREEN
+                ) {
+                    AllPhotosScreen()
+                }
+                composable(
+                    route = Screens.ALL_WHATSAPP_VIDEOS_SCREEN
+                ) {
+                    AllVideosScreen(
+                        navigateToVideoScreen = {
+                            navHostController.navigate(Screens.VIDEO_SCREEN + "/$it")
+                        }
+                    )
+                }
+
+                composable(
+                    route = Screens.ALL_SAVED_MEDIA_SCREEN
+                ) {
+                    SavedMediaScreen()
+
+                }
+            }
         }
 
     }

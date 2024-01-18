@@ -5,7 +5,7 @@ import java.io.File
 
 data class StatusFile(
     val file: File?,
-    val title:String?,
+    val title:String,
     val path:String?,
     val isVideo:Boolean ,
     val isApi30:Boolean,

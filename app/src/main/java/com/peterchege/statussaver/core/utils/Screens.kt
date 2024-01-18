@@ -19,4 +19,8 @@ object Screens {
     const val ALL_WHATSAPP_IMAGES_SCREEN = "all_whatsapp_images_screen"
     const val ALL_WHATSAPP_VIDEOS_SCREEN = "all_whatsapp_videos_screen"
     const val ALL_SAVED_MEDIA_SCREEN = "all_saved_media_screen"
+
+    const val BOTTOM_NAVIGATION = "BOTTOM_NAVIGATION"
+
+    const val VIDEO_SCREEN = "VIDEO_SCREEN"
 }

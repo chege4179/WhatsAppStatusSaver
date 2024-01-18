@@ -45,19 +45,20 @@ import com.peterchege.statussaver.ui.components.VideoCard
 
 @Composable
 fun AllVideosScreen(
-    viewModel: AllVideosScreenViewModel = hiltViewModel()
+    viewModel: AllVideosScreenViewModel = hiltViewModel(),
+    navigateToVideoScreen: (String) -> Unit
 ) {
     val videos by viewModel.videos.collectAsStateWithLifecycle()
-    val activeVideo by viewModel.activeVideo.collectAsStateWithLifecycle()
-
-
 
     AllVideosScreenContent(
         videos = videos,
-        activeVideo = activeVideo,
-        onChangeActiveVideo = viewModel::onChangeActivePhoto,
-        player = viewModel.getPlayer()
-    )
+        onChangeActiveVideo = {
+            it?.let {
+                navigateToVideoScreen(it.title)
+            }
+        },
+
+        )
 
 }
 
@@ -66,9 +67,7 @@ fun AllVideosScreen(
 @Composable
 fun AllVideosScreenContent(
     videos: List<StatusFile>,
-    activeVideo: StatusFile?,
     onChangeActiveVideo: (StatusFile?) -> Unit,
-    player: Player,
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -108,13 +107,6 @@ fun AllVideosScreenContent(
             } else {
                 Text("No files found")
             }
-        }
-        if (activeVideo != null) {
-            FullScreenVideo(
-                photo = activeVideo,
-                onDismiss = { onChangeActiveVideo(null) },
-                player = player,
-            )
         }
     }
 }
