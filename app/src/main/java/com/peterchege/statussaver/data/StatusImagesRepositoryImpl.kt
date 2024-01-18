@@ -15,34 +15,28 @@
  */
 package com.peterchege.statussaver.data
 
-import android.content.ContentUris
 import android.content.Context
 import android.os.Environment
-import android.provider.MediaStore
 import androidx.documentfile.provider.DocumentFile
 import com.peterchege.statussaver.core.di.IoDispatcher
+import com.peterchege.statussaver.core.utils.Constants.STATUS_DIRECTORY
 import com.peterchege.statussaver.core.utils.isVideo
 import com.peterchege.statussaver.core.utils.sdk29AndUp
 import com.peterchege.statussaver.domain.models.StatusFile
-import com.peterchege.statussaver.domain.models.WhatsAppPhoto
-import com.peterchege.statussaver.domain.repos.WhatsAppImagesRepository
+import com.peterchege.statussaver.domain.repos.StatusImagesRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
 
 
 //  WhatsApp/Media/.Statuses
-class WhatsAppAssetRepositoryImpl @Inject constructor(
+class StatusImagesRepositoryImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     @ApplicationContext private val appContext: Context,
-) : WhatsAppImagesRepository {
+) : StatusImagesRepository {
 
-    private val STATUS_DIRECTORY = File(
-        Environment.getExternalStorageDirectory().toString() +
-                File.separator + "WhatsApp/Media/.Statuses"
-    )
+
 
     override suspend fun getAllWhatsAppStatusImages(): List<StatusFile> {
         return sdk29AndUp { getWhatsAppStatusImagesGreaterThan29() }

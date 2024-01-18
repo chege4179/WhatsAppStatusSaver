@@ -16,10 +16,8 @@
 package com.peterchege.statussaver.domain.repos
 
 import com.peterchege.statussaver.domain.models.StatusFile
-import com.peterchege.statussaver.domain.models.WhatsAppPhoto
-import java.io.File
 
-interface WhatsAppImagesRepository {
+interface StatusImagesRepository {
 
     suspend fun getAllWhatsAppStatusImages():List<StatusFile>?
 

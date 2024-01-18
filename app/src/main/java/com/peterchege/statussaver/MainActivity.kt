@@ -16,7 +16,6 @@
 package com.peterchege.statussaver
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -36,9 +35,6 @@ import androidx.compose.ui.Modifier
 import androidx.core.app.ActivityCompat
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import com.peterchege.statussaver.core.utils.getRequiredPermissions
-import com.peterchege.statussaver.ui.components.PermissionDeniedComponent
 import com.peterchege.statussaver.ui.navigation.BottomNavigation
 import com.peterchege.statussaver.ui.theme.WhatsAppStatusSaverTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -110,28 +106,6 @@ class MainActivity : ComponentActivity() {
                 ) {
                     val navHostController = rememberNavController()
                     BottomNavigation(navHostController = navHostController)
-//                    val permissionState = rememberMultiplePermissionsState(
-//                        permissions = getRequiredPermissions(
-//                            above29 = listOf(
-//                                android.Manifest.permission.READ_MEDIA_IMAGES,
-//                                android.Manifest.permission.READ_MEDIA_VIDEO,
-//                            ),
-//                            below29 = listOf(
-//                                android.Manifest.permission.READ_EXTERNAL_STORAGE,
-//                                android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
-//                            )
-//                        ),
-//                    )
-//
-//                    if (permissionState.allPermissionsGranted) {
-//
-//                    } else {
-//                        PermissionDeniedComponent(
-//                            onClick = {
-//                                permissionState.launchMultiplePermissionRequest()
-//                            }
-//                        )
-//                    }
                 }
             }
         }

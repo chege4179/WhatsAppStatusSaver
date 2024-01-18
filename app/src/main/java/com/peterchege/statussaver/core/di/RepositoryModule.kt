@@ -16,8 +16,10 @@
 package com.peterchege.statussaver.core.di
 
 import android.content.Context
-import com.peterchege.statussaver.data.WhatsAppAssetRepositoryImpl
-import com.peterchege.statussaver.domain.repos.WhatsAppImagesRepository
+import com.peterchege.statussaver.data.StatusImagesRepositoryImpl
+import com.peterchege.statussaver.data.StatusVideosRepositoryImpl
+import com.peterchege.statussaver.domain.repos.StatusImagesRepository
+import com.peterchege.statussaver.domain.repos.StatusVideosRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -36,7 +38,16 @@ object RepositoryModule {
     fun provideWhatsAppImagesRepository(
         @IoDispatcher ioDispatcher: CoroutineDispatcher,
         @ApplicationContext context: Context
-    ): WhatsAppImagesRepository {
-        return WhatsAppAssetRepositoryImpl(ioDispatcher = ioDispatcher, appContext = context)
+    ): StatusImagesRepository {
+        return StatusImagesRepositoryImpl(ioDispatcher = ioDispatcher, appContext = context)
+    }
+
+    @Singleton
+    @Provides
+    fun provideWhatsAppVideosRepository(
+        @IoDispatcher ioDispatcher: CoroutineDispatcher,
+        @ApplicationContext context: Context
+    ): StatusVideosRepository {
+        return StatusVideosRepositoryImpl(ioDispatcher = ioDispatcher, appContext = context)
     }
 }

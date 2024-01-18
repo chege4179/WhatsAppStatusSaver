@@ -130,12 +130,10 @@ dependencies {
     implementation("androidx.media3:media3-exoplayer-dash:$media3_version")
     implementation("androidx.media3:media3-exoplayer-hls:$media3_version")
     implementation("androidx.media3:media3-exoplayer-rtsp:$media3_version")
-    implementation("androidx.media3:media3-exoplayer-ima:$media3_version")
     implementation("androidx.media3:media3-ui:$media3_version")
-    implementation("androidx.media3:media3-ui-leanback:$media3_version")
     implementation("androidx.media3:media3-session:$media3_version")
     implementation("androidx.media3:media3-extractor:$media3_version")
-    implementation("androidx.media3:media3-cast:$media3_version")
+
 
 
     implementation(platform("com.google.firebase:firebase-bom:32.6.0"))

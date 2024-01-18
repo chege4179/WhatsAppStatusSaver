@@ -24,6 +24,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -37,20 +41,42 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.SubcomposeAsyncImage
+import com.peterchege.statussaver.domain.models.StatusFile
+import com.peterchege.statussaver.ui.components.FullScreenPhoto
 import com.peterchege.statussaver.ui.components.ImageCard
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AllPhotosScreen(
     viewModel: AllPhotosScreenViewModel = hiltViewModel()
 ) {
     val photos by viewModel.photos.collectAsStateWithLifecycle()
+    val activePhoto by viewModel.activePhoto.collectAsStateWithLifecycle()
+
+    AllPhotosScreenContent(
+        photos = photos,
+        activePhoto = activePhoto,
+        onChangeActiveStatusFile = viewModel::onChangeActivePhoto
+    )
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AllPhotosScreenContent(
+    photos: List<StatusFile>,
+    activePhoto: StatusFile?,
+    onChangeActiveStatusFile: (StatusFile?) -> Unit,
+
+    ) {
+    val gridState = rememberLazyGridState()
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            TopAppBar(title = {
-                Text(text = "WhatsApp Status Saver")
-            })
+            TopAppBar(
+                title = {
+                    Text(text = "WhatsApp Status Saver")
+                }
+            )
         }
     ) { paddingValues ->
         Column(
@@ -61,23 +87,32 @@ fun AllPhotosScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-
+            if (photos.isNotEmpty()) {
+                LazyVerticalGrid(
+                    columns = GridCells.Adaptive(128.dp),
+                    state = gridState,
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.spacedBy(3.dp),
+                    horizontalArrangement = Arrangement.spacedBy(3.dp)
                 ) {
-                if (photos.isNotEmpty()) {
-                    items(items = photos) {
+                    items(items = photos, key = { photos.indexOf(it) }) {
                         ImageCard(
-                            onSaveImage = { /*TODO*/ },
+                            onSaveImage = {
+                                onChangeActiveStatusFile(it)
+                            },
                             image = it
                         )
                     }
-                } else {
-                    item {
-                        Text("No files found")
-                    }
                 }
+            } else {
+                Text("No files found")
             }
+        }
+        if (activePhoto != null) {
+            FullScreenPhoto(
+                photo = activePhoto,
+                onDismiss = { onChangeActiveStatusFile(null) }
+            )
         }
     }
 }

@@ -15,8 +15,13 @@
  */
 package com.peterchege.statussaver.core.utils
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.media.MediaMetadataRetriever
+import android.net.Uri
 import android.os.Build
 import androidx.media3.common.FileTypes.MP4
+import timber.log.Timber
 import java.io.File
 
 inline fun <T> sdk29AndUp(onSdk29: () -> T): T? {
@@ -25,10 +30,18 @@ inline fun <T> sdk29AndUp(onSdk29: () -> T): T? {
     } else null
 }
 
-fun getRequiredPermissions(below29: List<String>, above29: List<String>): List<String> {
-    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        above29
-    } else below29
+fun createVideoThumb(context: Context, uri: Uri?): Bitmap? {
+    try {
+        if (uri == null) return null
+        val mediaMetadataRetriever = MediaMetadataRetriever()
+        mediaMetadataRetriever.setDataSource(context, uri)
+        return mediaMetadataRetriever.frameAtTime
+    } catch (ex: Exception) {
+        Timber.tag("Thumbnail Error").i("Exception :${ex}")
+
+    }
+    return null
+
 }
 
 fun File.isVideo() = name.endsWith(".mp4")

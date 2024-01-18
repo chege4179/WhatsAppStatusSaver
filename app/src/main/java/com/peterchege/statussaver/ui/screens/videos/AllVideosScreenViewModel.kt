@@ -15,5 +15,74 @@
  */
 package com.peterchege.statussaver.ui.screens.videos
 
-class AllVideosScreenViewModel {
+import android.net.Uri
+import androidx.core.net.toUri
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
+import com.peterchege.statussaver.domain.models.StatusFile
+import com.peterchege.statussaver.domain.repos.StatusVideosRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import timber.log.Timber
+import javax.inject.Inject
+
+@HiltViewModel
+class AllVideosScreenViewModel @Inject constructor(
+    private val videosRepository: StatusVideosRepository,
+    private val player: Player,
+) : ViewModel() {
+
+    val TAG = AllVideosScreenViewModel::class.java.simpleName
+
+    private val _videos = MutableStateFlow<List<StatusFile>>(emptyList())
+    val videos = _videos.asStateFlow()
+
+    private val _activeVideo = MutableStateFlow<StatusFile?>(null)
+    val activeVideo = _activeVideo.asStateFlow()
+
+    init {
+        loadVideos()
+        player.prepare()
+    }
+
+    fun getPlayer():Player{
+        return player
+    }
+
+    private fun loadVideos() {
+        viewModelScope.launch {
+            val newVideos = videosRepository.getAllWhatsAppStatusVideos()
+
+            Timber.tag(TAG).i("Videos >>>> ${newVideos}")
+            _videos.update { newVideos ?: it }
+            val mediaItems = newVideos?.map { video ->
+                val uri = if (video.isApi30) video.documentFile?.uri else video.file?.toUri()
+                MediaItem.fromUri(uri!!)
+            }
+            if (mediaItems != null) {
+                player.addMediaItems(mediaItems)
+            }
+        }
+    }
+
+    fun playVideo(uri: Uri) {
+        player.setMediaItem(MediaItem.fromUri(uri))
+    }
+
+    fun onChangeActivePhoto(video: StatusFile?) {
+        _activeVideo.update { video }
+        if (video !=null){
+            val uri = if (video.isApi30) video.documentFile?.uri else video.file?.toUri()
+            if (uri != null) {
+                playVideo(uri = uri)
+            }
+        }
+    }
+
+
 }

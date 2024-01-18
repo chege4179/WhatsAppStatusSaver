@@ -15,7 +15,15 @@
  */
 package com.peterchege.statussaver.core.utils
 
+import android.os.Environment
+import java.io.File
+
 object Constants {
+
+    val STATUS_DIRECTORY = File(
+        Environment.getExternalStorageDirectory().toString() +
+                File.separator + "WhatsApp/Media/.Statuses"
+    )
 
 
 }

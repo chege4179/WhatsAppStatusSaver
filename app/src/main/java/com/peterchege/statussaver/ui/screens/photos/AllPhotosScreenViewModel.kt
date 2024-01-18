@@ -17,43 +17,46 @@ package com.peterchege.statussaver.ui.screens.photos
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.media3.common.Player
 import com.peterchege.statussaver.domain.models.StatusFile
-import com.peterchege.statussaver.domain.models.WhatsAppPhoto
-import com.peterchege.statussaver.domain.repos.WhatsAppImagesRepository
+import com.peterchege.statussaver.domain.repos.StatusImagesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
 class AllPhotosScreenViewModel @Inject constructor(
-    private val imagesRepository: WhatsAppImagesRepository,
+    private val imagesRepository: StatusImagesRepository,
 ): ViewModel() {
     private val TAG = AllPhotosScreenViewModel::class.java.simpleName
 
     private val _photos = MutableStateFlow<List<StatusFile>>(emptyList())
     val photos = _photos.asStateFlow()
 
+    private val _activePhoto = MutableStateFlow<StatusFile?>(null)
+    val activePhoto = _activePhoto.asStateFlow()
 
     init {
+        loadImages()
+    }
+
+
+    private fun loadImages(){
         viewModelScope.launch {
             val newPhotos = imagesRepository.getAllWhatsAppStatusImages()
-            Timber.tag(TAG).i("Photos >>>>..${newPhotos}")
+            Timber.tag(TAG).i("Photos >>>> ${newPhotos}")
             _photos.update {
-                if (newPhotos != null){
-                    it + newPhotos
-                }else{
-                    it
-                }
+                newPhotos ?: it
             }
         }
+    }
+
+    fun onChangeActivePhoto(photo:StatusFile?){
+        _activePhoto.update { photo }
     }
 
 }
