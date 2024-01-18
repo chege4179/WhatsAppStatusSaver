@@ -24,7 +24,7 @@ buildscript {
     }
     dependencies {
         classpath ("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.20")
-        classpath ("com.google.dagger:hilt-android-gradle-plugin:2.48.1")
+        classpath ("com.google.dagger:hilt-android-gradle-plugin:2.50")
         classpath ("com.google.gms:google-services:4.4.0")
         classpath ("com.google.firebase:firebase-crashlytics-gradle:2.9.9")
         classpath("org.jetbrains.kotlin:kotlin-serialization:1.9.20")

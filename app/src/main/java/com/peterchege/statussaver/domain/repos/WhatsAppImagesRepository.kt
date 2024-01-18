@@ -15,13 +15,12 @@
  */
 package com.peterchege.statussaver.domain.repos
 
+import com.peterchege.statussaver.domain.models.StatusFile
 import com.peterchege.statussaver.domain.models.WhatsAppPhoto
 import java.io.File
 
 interface WhatsAppImagesRepository {
 
+    suspend fun getAllWhatsAppStatusImages():List<StatusFile>?
 
-    suspend fun getAllWhatsAppImages():List<WhatsAppPhoto>
-
-    suspend fun getAllWhatsAppImagesTrial():List<File>
 }

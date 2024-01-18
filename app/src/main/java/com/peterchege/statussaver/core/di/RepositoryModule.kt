@@ -16,7 +16,7 @@
 package com.peterchege.statussaver.core.di
 
 import android.content.Context
-import com.peterchege.statussaver.data.WhatsAppImagesRepositoryImpl
+import com.peterchege.statussaver.data.WhatsAppAssetRepositoryImpl
 import com.peterchege.statussaver.domain.repos.WhatsAppImagesRepository
 import dagger.Module
 import dagger.Provides
@@ -37,6 +37,6 @@ object RepositoryModule {
         @IoDispatcher ioDispatcher: CoroutineDispatcher,
         @ApplicationContext context: Context
     ): WhatsAppImagesRepository {
-        return WhatsAppImagesRepositoryImpl(ioDispatcher = ioDispatcher, appContext = context)
+        return WhatsAppAssetRepositoryImpl(ioDispatcher = ioDispatcher, appContext = context)
     }
 }

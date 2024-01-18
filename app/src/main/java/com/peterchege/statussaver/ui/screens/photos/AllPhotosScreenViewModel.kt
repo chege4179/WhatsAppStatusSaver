@@ -17,11 +17,18 @@ package com.peterchege.statussaver.ui.screens.photos
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.peterchege.statussaver.domain.models.StatusFile
+import com.peterchege.statussaver.domain.models.WhatsAppPhoto
 import com.peterchege.statussaver.domain.repos.WhatsAppImagesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
 
@@ -29,11 +36,24 @@ import javax.inject.Inject
 class AllPhotosScreenViewModel @Inject constructor(
     private val imagesRepository: WhatsAppImagesRepository,
 ): ViewModel() {
+    private val TAG = AllPhotosScreenViewModel::class.java.simpleName
 
-    val images = flow<List<File>> { imagesRepository.getAllWhatsAppImagesTrial() }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000L),
-            initialValue = emptyList()
-        )
+    private val _photos = MutableStateFlow<List<StatusFile>>(emptyList())
+    val photos = _photos.asStateFlow()
+
+
+    init {
+        viewModelScope.launch {
+            val newPhotos = imagesRepository.getAllWhatsAppStatusImages()
+            Timber.tag(TAG).i("Photos >>>>..${newPhotos}")
+            _photos.update {
+                if (newPhotos != null){
+                    it + newPhotos
+                }else{
+                    it
+                }
+            }
+        }
+    }
+
 }

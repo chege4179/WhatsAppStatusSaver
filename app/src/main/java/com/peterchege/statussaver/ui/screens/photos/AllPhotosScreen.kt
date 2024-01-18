@@ -37,13 +37,14 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.SubcomposeAsyncImage
+import com.peterchege.statussaver.ui.components.ImageCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AllPhotosScreen(
     viewModel: AllPhotosScreenViewModel = hiltViewModel()
 ) {
-    val files by viewModel.images.collectAsStateWithLifecycle()
+    val photos by viewModel.photos.collectAsStateWithLifecycle()
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -64,38 +65,19 @@ fun AllPhotosScreen(
                 modifier = Modifier.fillMaxSize(),
 
                 ) {
-                if (files.isNotEmpty()){
-                    items(items = files) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(100.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Start,
-                        ) {
-                            SubcomposeAsyncImage(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(100.dp)
-                                    .width(100.dp),
-                                model = it.toURI(),
-                                contentDescription = "Image"
-                            )
-                            Text(text = it.absolutePath)
-
-                        }
-
+                if (photos.isNotEmpty()) {
+                    items(items = photos) {
+                        ImageCard(
+                            onSaveImage = { /*TODO*/ },
+                            image = it
+                        )
                     }
-                }else{
+                } else {
                     item {
                         Text("No files found")
                     }
-
                 }
-
             }
         }
-
     }
-
 }
