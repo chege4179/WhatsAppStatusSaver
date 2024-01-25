@@ -15,6 +15,8 @@
  */
 package com.peterchege.statussaver.ui.screens.photos
 
+import android.app.Activity
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -31,12 +33,17 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -44,18 +51,31 @@ import coil.compose.SubcomposeAsyncImage
 import com.peterchege.statussaver.domain.models.StatusFile
 import com.peterchege.statussaver.ui.components.FullScreenPhoto
 import com.peterchege.statussaver.ui.components.ImageCard
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun AllPhotosScreen(
-    viewModel: AllPhotosScreenViewModel = hiltViewModel()
+    viewModel: AllPhotosScreenViewModel = hiltViewModel(),
+    shareImage:(StatusFile) -> Unit,
 ) {
     val photos by viewModel.photos.collectAsStateWithLifecycle()
     val activePhoto by viewModel.activePhoto.collectAsStateWithLifecycle()
-
+    val activity = (LocalContext.current as? Activity)
+    BackHandler {
+        if (activePhoto != null){
+            viewModel.onChangeActivePhoto(null)
+        }else{
+            activity?.finish()
+        }
+    }
     AllPhotosScreenContent(
         photos = photos,
         activePhoto = activePhoto,
-        onChangeActiveStatusFile = viewModel::onChangeActivePhoto
+        onChangeActiveStatusFile = viewModel::onChangeActivePhoto,
+        eventFlow = viewModel.eventFlow,
+        saveImage = viewModel::savePhoto,
+        shareImage = shareImage,
     )
 }
 
@@ -66,10 +86,23 @@ fun AllPhotosScreenContent(
     photos: List<StatusFile>,
     activePhoto: StatusFile?,
     onChangeActiveStatusFile: (StatusFile?) -> Unit,
+    eventFlow: SharedFlow<String>,
+    saveImage:(StatusFile) -> Unit,
+    shareImage: (StatusFile) -> Unit,
 
     ) {
     val gridState = rememberLazyGridState()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(key1 = true){
+        eventFlow.collectLatest {
+            snackbarHostState.showSnackbar(message = it)
+        }
+    }
     Scaffold(
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        },
         modifier = Modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
@@ -89,7 +122,7 @@ fun AllPhotosScreenContent(
         ) {
             if (photos.isNotEmpty()) {
                 LazyVerticalGrid(
-                    columns = GridCells.Adaptive(128.dp),
+                    columns = GridCells.Fixed(2),
                     state = gridState,
                     modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.spacedBy(3.dp),
@@ -97,10 +130,11 @@ fun AllPhotosScreenContent(
                 ) {
                     items(items = photos, key = { photos.indexOf(it) }) {
                         ImageCard(
-                            onSaveImage = {
-                                onChangeActiveStatusFile(it)
-                            },
-                            image = it
+                            saveImage = saveImage,
+                            image = it,
+                            isSaved = false,
+                            shareImage = shareImage,
+                            setActiveImage = onChangeActiveStatusFile
                         )
                     }
                 }
@@ -111,7 +145,8 @@ fun AllPhotosScreenContent(
         if (activePhoto != null) {
             FullScreenPhoto(
                 photo = activePhoto,
-                onDismiss = { onChangeActiveStatusFile(null) }
+                onDismiss = { onChangeActiveStatusFile(null) },
+                saveImage = saveImage
             )
         }
     }

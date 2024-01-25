@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 WhatsApp Status Saver
+ * Copyright 2024 WhatsApp Status Saver
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.peterchege.statussaver.ui.screens.saved.videos
+package com.peterchege.statussaver.domain.repos
 
-class SavedVideosScreenViewModel {
+import com.peterchege.statussaver.domain.models.SaveResult
+import com.peterchege.statussaver.domain.models.StatusFile
+
+interface SavedStatusRepository {
+
+    suspend fun saveStatus(statusFile: StatusFile):SaveResult<String>
+
+    suspend fun getSavedStatus():List<StatusFile>
 }

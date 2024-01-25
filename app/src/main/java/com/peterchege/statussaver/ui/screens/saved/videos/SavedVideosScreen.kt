@@ -19,27 +19,53 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import com.peterchege.statussaver.domain.models.StatusFile
+import com.peterchege.statussaver.ui.components.VideoCard
 
 @Composable
-fun SavedVideosScreen() {
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Text(text = "Saved Screen")
+fun SavedVideosScreen(
+    statusFiles: List<StatusFile>,
+    shareVideo:(StatusFile) -> Unit,
+    saveVideo:(StatusFile) -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        val gridState = rememberLazyGridState()
+        if (statusFiles.isNotEmpty()) {
+            LazyVerticalGrid(
+                columns = GridCells.Adaptive(128.dp),
+                state = gridState,
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(3.dp),
+                horizontalArrangement = Arrangement.spacedBy(3.dp)
+            ) {
+                items(items = statusFiles) {
+                    VideoCard(
+                        video = it,
+                        saveVideo = saveVideo,
+                        shareVideo = shareVideo,
+                        setActiveVideo = {  },
+                        isSaved = true
+                    )
+                }
+            }
+        } else {
+            Text(text = "No saved status video files found")
         }
-
     }
 
 }

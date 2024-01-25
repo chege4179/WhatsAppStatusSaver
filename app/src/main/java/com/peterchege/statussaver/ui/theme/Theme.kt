@@ -37,7 +37,7 @@ private val DarkColorScheme = darkColorScheme(
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
+    primary = whatsAppGreenColor,
     secondary = PurpleGrey40,
     tertiary = Pink40
 

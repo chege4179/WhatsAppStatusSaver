@@ -16,8 +16,10 @@
 package com.peterchege.statussaver.core.di
 
 import android.content.Context
+import com.peterchege.statussaver.data.SavedStatusRepositoryImpl
 import com.peterchege.statussaver.data.StatusImagesRepositoryImpl
 import com.peterchege.statussaver.data.StatusVideosRepositoryImpl
+import com.peterchege.statussaver.domain.repos.SavedStatusRepository
 import com.peterchege.statussaver.domain.repos.StatusImagesRepository
 import com.peterchege.statussaver.domain.repos.StatusVideosRepository
 import dagger.Module
@@ -49,5 +51,14 @@ object RepositoryModule {
         @ApplicationContext context: Context
     ): StatusVideosRepository {
         return StatusVideosRepositoryImpl(ioDispatcher = ioDispatcher, appContext = context)
+    }
+
+    @Singleton
+    @Provides
+    fun provideSavedImagesRepository(
+        @IoDispatcher ioDispatcher: CoroutineDispatcher,
+        @ApplicationContext context: Context
+    ): SavedStatusRepository {
+        return SavedStatusRepositoryImpl(context = context, ioDispatcher = ioDispatcher)
     }
 }

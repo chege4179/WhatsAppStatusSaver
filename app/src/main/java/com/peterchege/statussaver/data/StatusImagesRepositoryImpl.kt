@@ -26,6 +26,7 @@ import com.peterchege.statussaver.domain.models.StatusFile
 import com.peterchege.statussaver.domain.repos.StatusImagesRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
 
@@ -39,8 +40,12 @@ class StatusImagesRepositoryImpl @Inject constructor(
 
 
     override suspend fun getAllWhatsAppStatusImages(): List<StatusFile> {
-        return sdk29AndUp { getWhatsAppStatusImagesGreaterThan29() }
-            ?: getWhatsAppStatusImagesLessThanAPI29()
+        return withContext(ioDispatcher){
+            sdk29AndUp(
+                onSdk29 = { getWhatsAppStatusImagesGreaterThan29() },
+                onBelowSdk29 = { getWhatsAppStatusImagesLessThanAPI29() }
+            )
+        }
     }
 
     private fun getWhatsAppStatusImagesLessThanAPI29(): List<StatusFile> {

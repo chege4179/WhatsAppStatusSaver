@@ -43,6 +43,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.peterchege.statussaver.core.utils.Screens
 import com.peterchege.statussaver.domain.models.BottomNavItem
+import com.peterchege.statussaver.domain.models.StatusFile
 import com.peterchege.statussaver.ui.screens.photos.AllPhotosScreen
 import com.peterchege.statussaver.ui.screens.saved.SavedMediaScreen
 import com.peterchege.statussaver.ui.screens.videos.AllVideosScreen
@@ -78,7 +79,8 @@ fun BottomNavBar(
 @ExperimentalMaterial3Api
 @Composable
 fun BottomNavigation(
-    navHostController: NavHostController,
+    shareImage:(StatusFile) -> Unit,
+    shareVideo:(StatusFile) -> Unit,
 ) {
     val navController = rememberNavController()
     Scaffold(
@@ -124,22 +126,25 @@ fun BottomNavigation(
                 composable(
                     route = Screens.ALL_WHATSAPP_IMAGES_SCREEN
                 ) {
-                    AllPhotosScreen()
+                    AllPhotosScreen(
+                        shareImage = shareImage,
+                    )
                 }
                 composable(
                     route = Screens.ALL_WHATSAPP_VIDEOS_SCREEN
                 ) {
                     AllVideosScreen(
-                        navigateToVideoScreen = {
-                            navHostController.navigate(Screens.VIDEO_SCREEN + "/$it")
-                        }
+                        shareVideo = shareVideo
                     )
                 }
 
                 composable(
                     route = Screens.ALL_SAVED_MEDIA_SCREEN
                 ) {
-                    SavedMediaScreen()
+                    SavedMediaScreen(
+                        shareVideo = shareVideo,
+                        shareImage = shareImage,
+                    )
 
                 }
             }

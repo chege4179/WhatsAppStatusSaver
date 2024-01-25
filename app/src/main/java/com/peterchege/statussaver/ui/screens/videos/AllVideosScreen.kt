@@ -15,6 +15,8 @@
  */
 package com.peterchege.statussaver.ui.screens.videos
 
+import android.app.Activity
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,13 +27,17 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -42,23 +48,37 @@ import com.peterchege.statussaver.domain.models.StatusFile
 import com.peterchege.statussaver.ui.components.FullScreenVideo
 import com.peterchege.statussaver.ui.components.ImageCard
 import com.peterchege.statussaver.ui.components.VideoCard
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun AllVideosScreen(
     viewModel: AllVideosScreenViewModel = hiltViewModel(),
-    navigateToVideoScreen: (String) -> Unit
+    shareVideo: (StatusFile) -> Unit,
 ) {
     val videos by viewModel.videos.collectAsStateWithLifecycle()
+    val activeVideo by viewModel.activeVideo.collectAsStateWithLifecycle()
+    val player = viewModel.getPlayer()
+
+    val activity = (LocalContext.current as? Activity)
+    BackHandler {
+        if (activeVideo != null){
+            viewModel.stopPlayer()
+            viewModel.onChangeActiveVideo(null)
+        }else{
+            activity?.finish()
+        }
+    }
 
     AllVideosScreenContent(
         videos = videos,
-        onChangeActiveVideo = {
-            it?.let {
-                navigateToVideoScreen(it.title)
-            }
-        },
-
-        )
+        activeVideo = activeVideo,
+        player = player,
+        onChangeActiveVideo = viewModel::onChangeActiveVideo,
+        saveStatus = viewModel::saveVideo,
+        eventFlow = viewModel.eventFlow,
+        shareVideo = shareVideo,
+    )
 
 }
 
@@ -67,9 +87,24 @@ fun AllVideosScreen(
 @Composable
 fun AllVideosScreenContent(
     videos: List<StatusFile>,
+    shareVideo: (StatusFile) -> Unit,
     onChangeActiveVideo: (StatusFile?) -> Unit,
+    activeVideo: StatusFile?,
+    saveStatus: (StatusFile) -> Unit,
+    player: Player,
+    eventFlow: SharedFlow<String>
 ) {
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(key1 = true) {
+        eventFlow.collectLatest {
+            snackbarHostState.showSnackbar(message = it)
+        }
+    }
     Scaffold(
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        },
         modifier = Modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
@@ -95,18 +130,27 @@ fun AllVideosScreenContent(
                     verticalArrangement = Arrangement.spacedBy(3.dp),
                     horizontalArrangement = Arrangement.spacedBy(3.dp)
                 ) {
-                    items(items = videos, key = { videos.indexOf(it) }) {
+                    items(items = videos) {
                         VideoCard(
-                            onSaveVideo = {
-                                onChangeActiveVideo(it)
-                            },
-                            video = it
+                            video = it,
+                            isSaved = false,
+                            shareVideo = shareVideo,
+                            saveVideo = saveStatus,
+                            setActiveVideo = onChangeActiveVideo
                         )
                     }
                 }
             } else {
-                Text("No files found")
+                Text(text = "No whatsapp video files found")
             }
+        }
+        if (activeVideo != null) {
+            FullScreenVideo(
+                photo = activeVideo,
+                player = player,
+                onDismiss = { onChangeActiveVideo(null) },
+                onSave = saveStatus
+            )
         }
     }
 }

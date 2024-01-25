@@ -24,24 +24,14 @@ import androidx.media3.common.FileTypes.MP4
 import timber.log.Timber
 import java.io.File
 
-inline fun <T> sdk29AndUp(onSdk29: () -> T): T? {
+inline fun <T> sdk29AndUp(onSdk29: () -> T,onBelowSdk29:() -> T ): T {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
         onSdk29()
-    } else null
-}
-
-fun createVideoThumb(context: Context, uri: Uri?): Bitmap? {
-    try {
-        if (uri == null) return null
-        val mediaMetadataRetriever = MediaMetadataRetriever()
-        mediaMetadataRetriever.setDataSource(context, uri)
-        return mediaMetadataRetriever.frameAtTime
-    } catch (ex: Exception) {
-        Timber.tag("Thumbnail Error").i("Exception :${ex}")
-
+    } else {
+        onBelowSdk29()
     }
-    return null
-
 }
+
+
 
 fun File.isVideo() = name.endsWith(".mp4")

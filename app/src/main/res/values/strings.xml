@@ -2,4 +2,14 @@
     <string name="app_name">WhatsAppStatusSaver</string>
 
     <string name="close">Close</string>
+
+    <string name="images">Images</string>
+    <string name="videos">Videos</string>
+
+    <string name="share_image_description">Share this image</string>
+    <string name="share_video_description">Share this video</string>
+
+    <string name="download_image_description">Download this image</string>
+    <string name="download_video_description">Download this video</string>
+
 </resources>

@@ -19,29 +19,62 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import com.peterchege.statussaver.domain.models.StatusFile
+import com.peterchege.statussaver.ui.components.FullScreenPhoto
+import com.peterchege.statussaver.ui.components.ImageCard
 
 @Composable
 fun SavedPhotosScreen(
-
+    statusFiles: List<StatusFile>,
+    shareImage:(StatusFile) -> Unit,
+    saveImage:(StatusFile) ->Unit,
 ) {
-    Scaffold(
-        modifier = Modifier.fillMaxSize()
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Text(text = "Saved Screen")
+    val gridState = rememberLazyGridState()
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(10.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+
+        if (statusFiles.isNotEmpty()) {
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                state = gridState,
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(3.dp),
+                horizontalArrangement = Arrangement.spacedBy(3.dp)
+            ) {
+                items(items = statusFiles, key = { statusFiles.indexOf(it) }) {
+                    ImageCard(
+                        isSaved = true,
+                        saveImage = saveImage,
+                        image = it,
+                        shareImage = shareImage,
+                        setActiveImage = {  }
+                    )
+                }
+            }
+        } else {
+            Text("No saved status image files found")
         }
-
     }
-
+//    if (activePhoto != null) {
+//        FullScreenPhoto(
+//            photo = activePhoto,
+//            onDismiss = { onChangeActiveStatusFile(null) },
+//            saveImage = saveImage
+//        )
+//    }
 }

@@ -17,11 +17,14 @@ package com.peterchege.statussaver.ui.screens.photos
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.media3.common.Player
+import com.peterchege.statussaver.domain.models.SaveResult
 import com.peterchege.statussaver.domain.models.StatusFile
+import com.peterchege.statussaver.domain.repos.SavedStatusRepository
 import com.peterchege.statussaver.domain.repos.StatusImagesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -31,11 +34,15 @@ import javax.inject.Inject
 @HiltViewModel
 class AllPhotosScreenViewModel @Inject constructor(
     private val imagesRepository: StatusImagesRepository,
+    private val savedStatusImagesRepository: SavedStatusRepository,
 ): ViewModel() {
     private val TAG = AllPhotosScreenViewModel::class.java.simpleName
 
     private val _photos = MutableStateFlow<List<StatusFile>>(emptyList())
     val photos = _photos.asStateFlow()
+
+    private val _eventFlow = MutableSharedFlow<String>()
+    val eventFlow = _eventFlow.asSharedFlow()
 
     private val _activePhoto = MutableStateFlow<StatusFile?>(null)
     val activePhoto = _activePhoto.asStateFlow()
@@ -59,4 +66,18 @@ class AllPhotosScreenViewModel @Inject constructor(
         _activePhoto.update { photo }
     }
 
+    fun savePhoto(photo: StatusFile){
+        viewModelScope.launch {
+            val result = savedStatusImagesRepository.saveStatus(photo)
+            when(result){
+                is SaveResult.Success -> {
+                    _eventFlow.emit(result.msg)
+                }
+                is SaveResult.Failure -> {
+                    _eventFlow.emit(result.msg)
+                }
+                else -> {}
+            }
+        }
+    }
 }

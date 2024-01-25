@@ -33,9 +33,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.app.ActivityCompat
-import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.peterchege.statussaver.ui.navigation.AppNavigation
 import com.peterchege.statussaver.ui.navigation.BottomNavigation
 import com.peterchege.statussaver.ui.theme.WhatsAppStatusSaverTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -107,8 +105,42 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val navHostController = rememberNavController()
-                    AppNavigation(navHostController = navHostController)
+
+                    BottomNavigation(
+                        shareImage = {
+                            val shareIntent = Intent(Intent.ACTION_SEND)
+                            shareIntent.setType("image/jpg")
+                            if (it.isApi30) {
+                                shareIntent.putExtra(
+                                    Intent.EXTRA_STREAM,
+                                    it.documentFile?.uri
+                                )
+                            } else {
+                                shareIntent.putExtra(
+                                    Intent.EXTRA_STREAM,
+                                    Uri.parse("file://" + it.file?.absolutePath)
+                                )
+                            }
+                            startActivity(Intent.createChooser(shareIntent, "Share image"))
+                        },
+                        shareVideo = {
+                            val shareIntent = Intent(Intent.ACTION_SEND)
+
+                            shareIntent.setType("image/mp4")
+                            if (it.isApi30) {
+                                shareIntent.putExtra(
+                                    Intent.EXTRA_STREAM,
+                                    it.documentFile?.uri
+                                )
+                            } else {
+                                shareIntent.putExtra(
+                                    Intent.EXTRA_STREAM,
+                                    Uri.parse("file://" + it.file?.absolutePath)
+                                )
+                            }
+                            startActivity(Intent.createChooser(shareIntent, "Share Video"))
+                        }
+                    )
                 }
             }
         }
