@@ -46,6 +46,8 @@ import timber.log.Timber
 class MainActivity : ComponentActivity() {
     val TAG = MainActivity::class.java.simpleName
 
+
+
     private val REQUEST_PERMISSIONS = 1234
 
     private val PERMISSIONS = arrayOf(

@@ -70,7 +70,7 @@ class StatusImagesRepositoryImpl @Inject constructor(
                 documentFile = it,
                 isApi30 = true,
                 isVideo = it.name?.endsWith(".mp4") ?: false,
-                title = it.name,
+                title = it.name ?:"",
                 path = null,
                 file = null
             )
