@@ -134,6 +134,8 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.5.0")
     implementation("io.coil-kt:coil-video:2.5.0")
 
+    implementation("androidx.core:core-splashscreen:1.0.1")
+
     val media3_version = "1.2.1"
 
     implementation("androidx.media3:media3-exoplayer:$media3_version")

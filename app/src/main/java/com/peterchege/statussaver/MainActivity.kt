@@ -33,6 +33,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.app.ActivityCompat
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.peterchege.statussaver.ui.navigation.BottomNavigation
 import com.peterchege.statussaver.ui.theme.WhatsAppStatusSaverTheme
@@ -78,6 +79,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        installSplashScreen()
         if (arePermissionDenied()) {
             // If Android 10+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {

@@ -15,8 +15,12 @@
  */
 package com.peterchege.statussaver.ui.screens.saved
 
+import android.net.Uri
+import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
 import com.peterchege.statussaver.domain.models.StatusFile
 import com.peterchege.statussaver.domain.repos.SavedStatusRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,20 +34,49 @@ import javax.inject.Inject
 @HiltViewModel
 class SavedMediaScreenViewModel @Inject constructor(
     private val savedStatusRepository: SavedStatusRepository,
+    private val player: Player,
 ):ViewModel(){
 
     private val _statusFiles = MutableStateFlow<List<StatusFile>>(emptyList())
     val statusFiles = _statusFiles.asStateFlow()
 
+    private val _activePhoto = MutableStateFlow<StatusFile?>(null)
+    val activePhoto = _activePhoto.asStateFlow()
+
+    private val _activeVideo = MutableStateFlow<StatusFile?>(null)
+    val activeVideo = _activeVideo.asStateFlow()
+
     init {
         getStatusFiles()
     }
 
-    fun getStatusFiles(){
+    fun onChangeActivePhoto(photo:StatusFile?){
+        _activePhoto.update { photo }
+    }
+
+
+    fun onChangeActiveVideo(statusFile: StatusFile?) {
+        _activeVideo.update { statusFile }
+        statusFile?.file?.toUri()?.let { playVideo(it) }
+    }
+
+    fun playVideo(uri: Uri) {
+        player.setMediaItem(MediaItem.fromUri(uri))
+    }
+
+    fun getPlayer():Player{
+        return player
+    }
+
+    fun stopPlayer(){
+        player.stop()
+        player.release()
+    }
+
+    private fun getStatusFiles(){
         viewModelScope.launch {
             val savedStatusFiles = savedStatusRepository.getSavedStatus()
             _statusFiles.update { savedStatusFiles }
-
         }
     }
 

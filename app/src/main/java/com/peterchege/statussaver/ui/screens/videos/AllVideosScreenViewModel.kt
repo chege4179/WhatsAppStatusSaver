@@ -65,6 +65,7 @@ class AllVideosScreenViewModel @Inject constructor(
 
     fun stopPlayer(){
         player.stop()
+        player.release()
     }
 
     private fun loadVideos() {
@@ -84,6 +85,7 @@ class AllVideosScreenViewModel @Inject constructor(
 
     fun playVideo(uri: Uri) {
         player.setMediaItem(MediaItem.fromUri(uri))
+
     }
 
     fun findStatusFileByName(videoName: String): StatusFile? {

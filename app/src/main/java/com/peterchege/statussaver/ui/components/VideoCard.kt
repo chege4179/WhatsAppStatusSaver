@@ -49,11 +49,11 @@ import com.peterchege.statussaver.R
 
 @Composable
 fun VideoCard(
-    isSaved:Boolean,
+    isSaved: Boolean,
     video: StatusFile,
-    saveVideo:(StatusFile) -> Unit,
-    shareVideo:(StatusFile) -> Unit,
-    setActiveVideo:(StatusFile) -> Unit,
+    saveVideo: (StatusFile) -> Unit,
+    shareVideo: (StatusFile) -> Unit,
+    setActiveVideo: (StatusFile) -> Unit,
 ) {
     val context = LocalContext.current
     val uri = if (video.isApi30) video.documentFile?.uri else video.file?.toUri()
@@ -68,7 +68,7 @@ fun VideoCard(
     val painter = rememberAsyncImagePainter(
         model = uri,
         imageLoader = imageLoader,
-        )
+    )
 
     Column(
         modifier = Modifier
@@ -76,7 +76,7 @@ fun VideoCard(
             .width(100.dp)
             .clip(RoundedCornerShape(7.dp))
             .background(Color.LightGray)
-    ){
+    ) {
         Image(
             painter = painter,
             modifier = Modifier
@@ -85,10 +85,9 @@ fun VideoCard(
                 .clip(RoundedCornerShape(7.dp))
                 .pointerInput(setActiveVideo) {
                     detectTapGestures { setActiveVideo(video) }
-                }
-            ,
+                },
             contentScale = ContentScale.FillWidth,
-            contentDescription = "Video thumbnail"
+            contentDescription = stringResource(id = R.string.whatsapp_video)
         )
 
         Row(
@@ -98,7 +97,7 @@ fun VideoCard(
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            if (!isSaved){
+            if (!isSaved) {
                 CustomIconButton(
                     imageVector = Icons.Default.Download,
                     contentDescription = stringResource(id = R.string.download_video_description),

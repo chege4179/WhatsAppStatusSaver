@@ -76,7 +76,7 @@ fun ImageCard(
                 ,
             contentScale = ContentScale.FillBounds,
             model = uri,
-            contentDescription = "Image"
+            contentDescription = stringResource(id = R.string.whatsapp_image)
         )
         Row(
             modifier = Modifier

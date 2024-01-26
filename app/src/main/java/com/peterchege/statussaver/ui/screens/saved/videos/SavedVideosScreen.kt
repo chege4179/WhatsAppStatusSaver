@@ -28,19 +28,28 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.media3.common.Player
 import com.peterchege.statussaver.domain.models.StatusFile
 import com.peterchege.statussaver.ui.components.VideoCard
+import com.peterchege.statussaver.R
+import com.peterchege.statussaver.ui.components.FullScreenVideo
 
 @Composable
 fun SavedVideosScreen(
     statusFiles: List<StatusFile>,
     shareVideo:(StatusFile) -> Unit,
     saveVideo:(StatusFile) -> Unit,
+    activeVideo:StatusFile?,
+    player: Player,
+    onChangeActiveVideo:(StatusFile?) -> Unit,
 ) {
     Column(
         modifier = Modifier
-            .fillMaxSize(),
+            .fillMaxSize()
+            .padding(10.dp)
+        ,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -58,14 +67,22 @@ fun SavedVideosScreen(
                         video = it,
                         saveVideo = saveVideo,
                         shareVideo = shareVideo,
-                        setActiveVideo = {  },
+                        setActiveVideo = onChangeActiveVideo,
                         isSaved = true
                     )
                 }
             }
         } else {
-            Text(text = "No saved status video files found")
+            Text(text = stringResource(id = R.string.no_saved_videos_found))
         }
+    }
+    if (activeVideo != null) {
+        FullScreenVideo(
+            photo = activeVideo,
+            player = player,
+            onDismiss = { onChangeActiveVideo(null) },
+            onSave = {  }
+        )
     }
 
 }

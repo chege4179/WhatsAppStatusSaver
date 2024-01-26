@@ -38,6 +38,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -50,6 +51,7 @@ import com.peterchege.statussaver.ui.components.ImageCard
 import com.peterchege.statussaver.ui.components.VideoCard
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collectLatest
+import com.peterchege.statussaver.R
 
 @Composable
 fun AllVideosScreen(
@@ -109,7 +111,7 @@ fun AllVideosScreenContent(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(text = "Videos")
+                    Text(text = stringResource(id = R.string.videos))
                 }
             )
         }
@@ -141,7 +143,7 @@ fun AllVideosScreenContent(
                     }
                 }
             } else {
-                Text(text = "No whatsapp video files found")
+                Text(text = stringResource(id = R.string.no_saved_videos_found))
             }
         }
         if (activeVideo != null) {

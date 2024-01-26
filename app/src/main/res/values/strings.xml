@@ -1,5 +1,7 @@
 <resources>
-    <string name="app_name">WhatsAppStatusSaver</string>
+    <string name="app_name">Status Saver</string>
+
+    <string name="app_header_text">WhatsApp Status Saver</string>
 
     <string name="close">Close</string>
 
@@ -11,5 +13,18 @@
 
     <string name="download_image_description">Download this image</string>
     <string name="download_video_description">Download this video</string>
+
+    <string name="whatsapp_image">WhatsApp Image</string>
+    <string name="whatsapp_video">WhatsApp Video</string>
+
+
+    <string name="saved_status">Saved Statuses</string>
+
+    <string name="no_whatsapp_images_found">No WhatsApp Images found</string>
+    <string name="no_whatsapp_video_found">No WhatsApp Video found</string>
+
+
+    <string name="no_saved_videos_found">No saved video files found</string>
+    <string name="no_saved_images_found">No saved images files found</string>
 
 </resources>

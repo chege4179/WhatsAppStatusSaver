@@ -44,6 +44,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -53,19 +54,20 @@ import com.peterchege.statussaver.ui.components.FullScreenPhoto
 import com.peterchege.statussaver.ui.components.ImageCard
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collectLatest
+import com.peterchege.statussaver.R
 
 @Composable
 fun AllPhotosScreen(
     viewModel: AllPhotosScreenViewModel = hiltViewModel(),
-    shareImage:(StatusFile) -> Unit,
+    shareImage: (StatusFile) -> Unit,
 ) {
     val photos by viewModel.photos.collectAsStateWithLifecycle()
     val activePhoto by viewModel.activePhoto.collectAsStateWithLifecycle()
     val activity = (LocalContext.current as? Activity)
     BackHandler {
-        if (activePhoto != null){
+        if (activePhoto != null) {
             viewModel.onChangeActivePhoto(null)
-        }else{
+        } else {
             activity?.finish()
         }
     }
@@ -87,14 +89,14 @@ fun AllPhotosScreenContent(
     activePhoto: StatusFile?,
     onChangeActiveStatusFile: (StatusFile?) -> Unit,
     eventFlow: SharedFlow<String>,
-    saveImage:(StatusFile) -> Unit,
+    saveImage: (StatusFile) -> Unit,
     shareImage: (StatusFile) -> Unit,
 
     ) {
     val gridState = rememberLazyGridState()
     val snackbarHostState = remember { SnackbarHostState() }
 
-    LaunchedEffect(key1 = true){
+    LaunchedEffect(key1 = true) {
         eventFlow.collectLatest {
             snackbarHostState.showSnackbar(message = it)
         }
@@ -107,7 +109,7 @@ fun AllPhotosScreenContent(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(text = "WhatsApp Status Saver")
+                    Text(text = stringResource(id = R.string.app_header_text))
                 }
             )
         }
@@ -139,7 +141,7 @@ fun AllPhotosScreenContent(
                     }
                 }
             } else {
-                Text("No files found")
+                Text(text = stringResource(id = R.string.no_whatsapp_images_found))
             }
         }
         if (activePhoto != null) {

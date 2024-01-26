@@ -28,16 +28,20 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.peterchege.statussaver.domain.models.StatusFile
 import com.peterchege.statussaver.ui.components.FullScreenPhoto
 import com.peterchege.statussaver.ui.components.ImageCard
+import com.peterchege.statussaver.R
 
 @Composable
 fun SavedPhotosScreen(
     statusFiles: List<StatusFile>,
     shareImage:(StatusFile) -> Unit,
     saveImage:(StatusFile) ->Unit,
+    activePhoto:StatusFile?,
+    onChangeActivePhoto:(StatusFile?) -> Unit,
 ) {
     val gridState = rememberLazyGridState()
     Column(
@@ -62,19 +66,19 @@ fun SavedPhotosScreen(
                         saveImage = saveImage,
                         image = it,
                         shareImage = shareImage,
-                        setActiveImage = {  }
+                        setActiveImage = onChangeActivePhoto
                     )
                 }
             }
         } else {
-            Text("No saved status image files found")
+            Text(text = stringResource(id = R.string.no_saved_images_found))
         }
     }
-//    if (activePhoto != null) {
-//        FullScreenPhoto(
-//            photo = activePhoto,
-//            onDismiss = { onChangeActiveStatusFile(null) },
-//            saveImage = saveImage
-//        )
-//    }
+    if (activePhoto != null) {
+        FullScreenPhoto(
+            photo = activePhoto,
+            onDismiss = { onChangeActivePhoto(null) },
+            saveImage = saveImage
+        )
+    }
 }

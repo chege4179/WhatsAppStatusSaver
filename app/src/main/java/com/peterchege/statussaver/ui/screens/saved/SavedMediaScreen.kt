@@ -15,6 +15,8 @@
  */
 package com.peterchege.statussaver.ui.screens.saved
 
+import android.app.Activity
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -41,12 +43,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.media3.common.Player
 import com.peterchege.statussaver.R
 import com.peterchege.statussaver.domain.models.StatusFile
 import com.peterchege.statussaver.ui.screens.saved.photos.SavedPhotosScreen
@@ -60,12 +64,32 @@ fun SavedMediaScreen(
     shareVideo: (StatusFile) -> Unit,
 ) {
     val statusFiles by viewModel.statusFiles.collectAsStateWithLifecycle()
+    val activeVideo by viewModel.activeVideo.collectAsStateWithLifecycle()
+    val activePhoto by viewModel.activePhoto.collectAsStateWithLifecycle()
+
+    val activity = (LocalContext.current as? Activity)
+    BackHandler {
+        if (activeVideo != null){
+            viewModel.stopPlayer()
+            viewModel.onChangeActiveVideo(null)
+        }else if (activePhoto !=null){
+            viewModel.onChangeActivePhoto(null)
+        }else{
+            activity?.finish()
+        }
+    }
+
 
 
     SavedMediaScreenContent(
         statusFiles = statusFiles,
         shareImage = shareImage,
         shareVideo = shareVideo,
+        activeVideo = activeVideo,
+        activePhoto = activePhoto,
+        onChangeActiveVideo = viewModel::onChangeActiveVideo,
+        onChangeActivePhoto = viewModel::onChangeActivePhoto,
+        player = viewModel.getPlayer()
     )
 
 }
@@ -77,6 +101,11 @@ fun SavedMediaScreenContent(
     statusFiles: List<StatusFile>,
     shareImage: (StatusFile) -> Unit,
     shareVideo: (StatusFile) -> Unit,
+    activeVideo:StatusFile?,
+    activePhoto:StatusFile?,
+    onChangeActiveVideo:(StatusFile?) -> Unit,
+    onChangeActivePhoto:(StatusFile?) ->Unit,
+    player: Player,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     Scaffold(
@@ -88,7 +117,7 @@ fun SavedMediaScreenContent(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(text = "Saved Statuses")
+                    Text(text = stringResource(id = R.string.saved_status))
                 }
             )
         },
@@ -152,13 +181,18 @@ fun SavedMediaScreenContent(
                         0 -> SavedPhotosScreen(
                             statusFiles = statusFiles.filter { !it.isVideo },
                             saveImage = { },
-                            shareImage = shareImage
+                            shareImage = shareImage,
+                            activePhoto = activePhoto,
+                            onChangeActivePhoto = onChangeActivePhoto
                         )
 
                         1 -> SavedVideosScreen(
                             statusFiles = statusFiles.filter { it.isVideo },
                             saveVideo = { },
-                            shareVideo = shareVideo
+                            shareVideo = shareVideo,
+                            onChangeActiveVideo = onChangeActiveVideo,
+                            activeVideo = activeVideo,
+                            player = player
                         )
 
                     }
