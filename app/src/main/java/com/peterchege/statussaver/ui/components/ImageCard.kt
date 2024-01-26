@@ -54,7 +54,9 @@ fun ImageCard(
     saveImage: (StatusFile) -> Unit,
     setActiveImage:(StatusFile) -> Unit,
 ) {
-    val uri = if (image.isApi30) image.documentFile?.uri else image.file?.toUri()
+    val whatsappUri = if (image.isApi30) image.documentFile?.uri else image.file?.toUri()
+    val savedUri = image.file
+    val uri = if (isSaved) savedUri else whatsappUri
 
     Column(
         modifier = Modifier

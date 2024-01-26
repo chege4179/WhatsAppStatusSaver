@@ -56,8 +56,9 @@ fun VideoCard(
     setActiveVideo: (StatusFile) -> Unit,
 ) {
     val context = LocalContext.current
-    val uri = if (video.isApi30) video.documentFile?.uri else video.file?.toUri()
-
+    val whatsappUri = if (video.isApi30) video.documentFile?.uri else video.file?.toUri()
+    val savedUri = video.file
+    val uri = if (isSaved) savedUri else whatsappUri
     val imageLoader = ImageLoader.Builder(context)
         .components {
             add(VideoFrameDecoder.Factory())
