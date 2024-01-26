@@ -38,9 +38,8 @@ class StatusImagesRepositoryImpl @Inject constructor(
 ) : StatusImagesRepository {
 
 
-
     override suspend fun getAllWhatsAppStatusImages(): List<StatusFile> {
-        return withContext(ioDispatcher){
+        return withContext(ioDispatcher) {
             sdk29AndUp(
                 onSdk29 = { getWhatsAppStatusImagesGreaterThan29() },
                 onBelowSdk29 = { getWhatsAppStatusImagesLessThanAPI29() }
@@ -71,15 +70,16 @@ class StatusImagesRepositoryImpl @Inject constructor(
         return statusFiles
             .filterNot { it.name!!.contains(".nomedia") }
             .map {
-            StatusFile(
-                documentFile = it,
-                isApi30 = true,
-                isVideo = it.name?.endsWith(".mp4") ?: false,
-                title = it.name ?:"",
-                path = null,
-                file = null
-            )
-        }
+                StatusFile(
+                    documentFile = it,
+                    isApi30 = true,
+                    isVideo = it.name?.endsWith(".mp4") ?: false,
+                    title = it.name ?: "",
+                    path = null,
+                    file = null
+                )
+            }
+            .filter { !it.isVideo }
     }
 
 }

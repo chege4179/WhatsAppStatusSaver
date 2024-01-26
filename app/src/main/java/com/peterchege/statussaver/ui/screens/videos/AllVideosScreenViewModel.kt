@@ -65,7 +65,7 @@ class AllVideosScreenViewModel @Inject constructor(
 
     fun stopPlayer(){
         player.stop()
-        player.release()
+
     }
 
     private fun loadVideos() {

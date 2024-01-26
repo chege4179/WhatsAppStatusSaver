@@ -64,6 +64,7 @@ class StatusVideosRepositoryImpl @Inject constructor(
         val file = DocumentFile.fromTreeUri(appContext, list[0].uri) ?: return emptyList()
         val statusFiles = file.listFiles()
         return statusFiles
+
             .filterNot { it.name!!.contains(".nomedia") }
             .map {
                 StatusFile(
@@ -75,5 +76,7 @@ class StatusVideosRepositoryImpl @Inject constructor(
                     file = null
                 )
             }
+            .filter { it.isVideo }
+
     }
 }

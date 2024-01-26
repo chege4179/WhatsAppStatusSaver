@@ -70,7 +70,7 @@ class SavedMediaScreenViewModel @Inject constructor(
 
     fun stopPlayer(){
         player.stop()
-        player.release()
+
     }
 
     private fun getStatusFiles(){
