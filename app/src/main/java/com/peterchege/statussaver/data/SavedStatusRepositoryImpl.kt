@@ -22,6 +22,9 @@ import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import androidx.core.content.FileProvider
+import com.peterchege.statussaver.core.analytics.analytics.FirebaseAnalyticsHelper
+import com.peterchege.statussaver.core.analytics.analytics.imageDownloaded
+import com.peterchege.statussaver.core.analytics.analytics.videoDownloaded
 import com.peterchege.statussaver.core.di.IoDispatcher
 import com.peterchege.statussaver.core.utils.SingleMediaScanner
 import com.peterchege.statussaver.core.utils.isVideo
@@ -43,6 +46,7 @@ import javax.inject.Inject
 
 class SavedStatusRepositoryImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
+    private val analyticsHelper: FirebaseAnalyticsHelper,
     private val context: Context,
 ) : SavedStatusRepository {
 
@@ -146,8 +150,10 @@ class SavedStatusRepositoryImpl @Inject constructor(
                     )
                     IOUtils.copy(inputStream, outputStream)
                     if (statusFile.isVideo){
+                        analyticsHelper.videoDownloaded()
                         SaveResult.Success(msg = "Video Saved successfully")
                     }else{
+                        analyticsHelper.imageDownloaded()
                         SaveResult.Success(msg = "Image Saved successfully")
                     }
                 },
@@ -162,8 +168,10 @@ class SavedStatusRepositoryImpl @Inject constructor(
                         File(destFile.absolutePath)
                     )
                     if (statusFile.isVideo){
+                        analyticsHelper.videoDownloaded()
                         SaveResult.Success(msg = "Video Saved successfully")
                     }else{
+                        analyticsHelper.imageDownloaded()
                         SaveResult.Success(msg = "Image Saved successfully")
                     }
 

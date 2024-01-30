@@ -16,6 +16,7 @@
 package com.peterchege.statussaver
 
 import android.app.Application
+import com.google.firebase.BuildConfig
 import com.peterchege.statussaver.core.analytics.crashlytics.CrashlyticsTree
 import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
@@ -26,6 +27,7 @@ class WhatsAppStatusSaverApp:Application() {
 
     override fun onCreate() {
         super.onCreate()
+
         Timber.plant(CrashlyticsTree())
         Timber.plant(Timber.DebugTree())
     }

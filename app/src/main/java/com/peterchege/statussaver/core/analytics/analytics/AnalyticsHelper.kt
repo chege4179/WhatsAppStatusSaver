@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 WhatsApp Status Saver
+ * Copyright 2024 WhatsApp Status Saver
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,15 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.peterchege.statussaver.core.di
+package com.peterchege.statussaver.core.analytics.analytics
 
-import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-
-
-@Module
-@InstallIn(SingletonComponent::class)
-object DatabaseModule {
-
+interface AnalyticsHelper {
+    fun logEvent(event: AnalyticsEvent)
 }

@@ -15,6 +15,7 @@
  */
 package com.peterchege.statussaver.ui.navigation
 
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -26,6 +27,9 @@ import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Videocam
+import androidx.compose.material.icons.outlined.Download
+import androidx.compose.material.icons.outlined.Image
+import androidx.compose.material.icons.outlined.Videocam
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -35,6 +39,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -47,6 +52,7 @@ import com.peterchege.statussaver.domain.models.StatusFile
 import com.peterchege.statussaver.ui.screens.photos.AllPhotosScreen
 import com.peterchege.statussaver.ui.screens.saved.SavedMediaScreen
 import com.peterchege.statussaver.ui.screens.videos.AllVideosScreen
+import com.peterchege.statussaver.R
 
 @ExperimentalMaterial3Api
 @Composable
@@ -63,7 +69,7 @@ fun BottomNavBar(
             NavigationBarItem(
                 icon = {
                     Icon(
-                        imageVector = item.icon,
+                        imageVector = if (selected) item.selectedIcon else item.unselectedIcon,
                         contentDescription = item.name
                     )
                 },
@@ -76,11 +82,12 @@ fun BottomNavBar(
 }
 
 
+@OptIn(ExperimentalAnimationApi::class)
 @ExperimentalMaterial3Api
 @Composable
 fun BottomNavigation(
-    shareImage:(StatusFile) -> Unit,
-    shareVideo:(StatusFile) -> Unit,
+    shareImage: (StatusFile) -> Unit,
+    shareVideo: (StatusFile) -> Unit,
 ) {
     val navController = rememberNavController()
     Scaffold(
@@ -88,20 +95,23 @@ fun BottomNavigation(
             BottomNavBar(
                 items = listOf(
                     BottomNavItem(
-                        name = "Images",
+                        name = stringResource(id = R.string.images),
                         route = Screens.ALL_WHATSAPP_IMAGES_SCREEN,
-                        icon = Icons.Default.Image
+                        selectedIcon = Icons.Default.Image,
+                        unselectedIcon = Icons.Outlined.Image,
                     ),
 
                     BottomNavItem(
-                        name = "Videos",
+                        name = stringResource(id = R.string.videos),
                         route = Screens.ALL_WHATSAPP_VIDEOS_SCREEN,
-                        icon = Icons.Default.Videocam
+                        selectedIcon = Icons.Default.Videocam,
+                        unselectedIcon = Icons.Outlined.Videocam
                     ),
                     BottomNavItem(
-                        name = "Saved",
+                        name = stringResource(id = R.string.saved),
                         route = Screens.ALL_SAVED_MEDIA_SCREEN,
-                        icon = Icons.Default.Download
+                        selectedIcon = Icons.Default.Download,
+                        unselectedIcon = Icons.Outlined.Download
                     )
 
                 ),
@@ -124,14 +134,22 @@ fun BottomNavigation(
                 startDestination = Screens.ALL_WHATSAPP_IMAGES_SCREEN
             ) {
                 composable(
-                    route = Screens.ALL_WHATSAPP_IMAGES_SCREEN
+                    route = Screens.ALL_WHATSAPP_IMAGES_SCREEN,
+                    enterTransition = { scaleInEnterTransition() },
+                    exitTransition = { scaleOutExitTransition() },
+                    popEnterTransition = { scaleInPopEnterTransition() },
+                    popExitTransition = { scaleOutPopExitTransition() },
                 ) {
                     AllPhotosScreen(
                         shareImage = shareImage,
                     )
                 }
                 composable(
-                    route = Screens.ALL_WHATSAPP_VIDEOS_SCREEN
+                    route = Screens.ALL_WHATSAPP_VIDEOS_SCREEN,
+                    enterTransition = { scaleInEnterTransition() },
+                    exitTransition = { scaleOutExitTransition() },
+                    popEnterTransition = { scaleInPopEnterTransition() },
+                    popExitTransition = { scaleOutPopExitTransition() },
                 ) {
                     AllVideosScreen(
                         shareVideo = shareVideo
@@ -139,7 +157,11 @@ fun BottomNavigation(
                 }
 
                 composable(
-                    route = Screens.ALL_SAVED_MEDIA_SCREEN
+                    route = Screens.ALL_SAVED_MEDIA_SCREEN,
+                    enterTransition = { scaleInEnterTransition() },
+                    exitTransition = { scaleOutExitTransition() },
+                    popEnterTransition = { scaleInPopEnterTransition() },
+                    popExitTransition = { scaleOutPopExitTransition() },
                 ) {
                     SavedMediaScreen(
                         shareVideo = shareVideo,

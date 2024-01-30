@@ -16,6 +16,7 @@
 package com.peterchege.statussaver.core.di
 
 import android.content.Context
+import com.peterchege.statussaver.core.analytics.analytics.FirebaseAnalyticsHelper
 import com.peterchege.statussaver.data.SavedStatusRepositoryImpl
 import com.peterchege.statussaver.data.StatusImagesRepositoryImpl
 import com.peterchege.statussaver.data.StatusVideosRepositoryImpl
@@ -57,8 +58,13 @@ object RepositoryModule {
     @Provides
     fun provideSavedImagesRepository(
         @IoDispatcher ioDispatcher: CoroutineDispatcher,
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
+        analyticsHelper: FirebaseAnalyticsHelper,
     ): SavedStatusRepository {
-        return SavedStatusRepositoryImpl(context = context, ioDispatcher = ioDispatcher)
+        return SavedStatusRepositoryImpl(
+            context = context,
+            ioDispatcher = ioDispatcher,
+            analyticsHelper = analyticsHelper
+        )
     }
 }
