@@ -38,6 +38,7 @@ import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -63,6 +64,9 @@ fun SavedMediaScreen(
     shareImage: (StatusFile) -> Unit,
     shareVideo: (StatusFile) -> Unit,
 ) {
+    LaunchedEffect(key1 = Unit) {
+        viewModel.getStatusFiles()
+    }
     val statusFiles by viewModel.statusFiles.collectAsStateWithLifecycle()
     val activeVideo by viewModel.activeVideo.collectAsStateWithLifecycle()
     val activePhoto by viewModel.activePhoto.collectAsStateWithLifecycle()
@@ -117,7 +121,7 @@ fun SavedMediaScreenContent(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(text = stringResource(id = R.string.saved_status))
+                    Text(text = stringResource(id = R.string.saved_status) + "${statusFiles.size}")
                 }
             )
         },
@@ -171,29 +175,39 @@ fun SavedMediaScreenContent(
                     )
                 }
             }
+            val savedPhotos = remember(statusFiles) {
+                statusFiles.filter { !it.isVideo }
+            }
+            val savedVideos = remember(statusFiles) {
+                statusFiles.filter { it.isVideo }
+            }
             HorizontalPager(state = pagerState) {
                 AnimatedContent(
                     targetState = pagerState,
                     label = "Horizontal Pager",
-
                     ) { pager ->
-                    when (pager.currentPage) {
-                        0 -> SavedPhotosScreen(
-                            statusFiles = statusFiles.filter { !it.isVideo },
-                            saveImage = { },
-                            shareImage = shareImage,
-                            activePhoto = activePhoto,
-                            onChangeActivePhoto = onChangeActivePhoto
-                        )
 
-                        1 -> SavedVideosScreen(
-                            statusFiles = statusFiles.filter { it.isVideo },
-                            saveVideo = { },
-                            shareVideo = shareVideo,
-                            onChangeActiveVideo = onChangeActiveVideo,
-                            activeVideo = activeVideo,
-                            player = player
-                        )
+                    when (pager.currentPage) {
+                        0 -> {
+                            SavedPhotosScreen(
+                                statusFiles = savedPhotos,
+                                saveImage = { },
+                                shareImage = shareImage,
+                                activePhoto = activePhoto,
+                                onChangeActivePhoto = onChangeActivePhoto
+                            )
+                        }
+
+                        1 -> {
+                            SavedVideosScreen(
+                                statusFiles = savedVideos,
+                                saveVideo = { },
+                                shareVideo = shareVideo,
+                                onChangeActiveVideo = onChangeActiveVideo,
+                                activeVideo = activeVideo,
+                                player = player
+                            )
+                        }
 
                     }
                 }

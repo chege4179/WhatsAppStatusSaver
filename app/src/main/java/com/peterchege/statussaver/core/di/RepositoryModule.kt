@@ -16,7 +16,8 @@
 package com.peterchege.statussaver.core.di
 
 import android.content.Context
-import com.peterchege.statussaver.core.analytics.analytics.FirebaseAnalyticsHelper
+import com.peterchege.statussaver.core.firebase.analytics.FirebaseAnalyticsHelper
+import com.peterchege.statussaver.core.firebase.crashlytics.FirebaseLogger
 import com.peterchege.statussaver.data.SavedStatusRepositoryImpl
 import com.peterchege.statussaver.data.StatusImagesRepositoryImpl
 import com.peterchege.statussaver.data.StatusVideosRepositoryImpl
@@ -40,18 +41,28 @@ object RepositoryModule {
     @Provides
     fun provideWhatsAppImagesRepository(
         @IoDispatcher ioDispatcher: CoroutineDispatcher,
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
+        firebaseLogger:FirebaseLogger
     ): StatusImagesRepository {
-        return StatusImagesRepositoryImpl(ioDispatcher = ioDispatcher, appContext = context)
+        return StatusImagesRepositoryImpl(
+            ioDispatcher = ioDispatcher,
+            appContext = context,
+            firebaseLogger = firebaseLogger,
+        )
     }
 
     @Singleton
     @Provides
     fun provideWhatsAppVideosRepository(
         @IoDispatcher ioDispatcher: CoroutineDispatcher,
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
+        firebaseLogger:FirebaseLogger
     ): StatusVideosRepository {
-        return StatusVideosRepositoryImpl(ioDispatcher = ioDispatcher, appContext = context)
+        return StatusVideosRepositoryImpl(
+            ioDispatcher = ioDispatcher,
+            appContext = context,
+            firebaseLogger = firebaseLogger,
+        )
     }
 
     @Singleton
@@ -60,11 +71,13 @@ object RepositoryModule {
         @IoDispatcher ioDispatcher: CoroutineDispatcher,
         @ApplicationContext context: Context,
         analyticsHelper: FirebaseAnalyticsHelper,
+        firebaseLogger:FirebaseLogger
     ): SavedStatusRepository {
         return SavedStatusRepositoryImpl(
             context = context,
             ioDispatcher = ioDispatcher,
-            analyticsHelper = analyticsHelper
+            analyticsHelper = analyticsHelper,
+            firebaseLogger = firebaseLogger,
         )
     }
 }

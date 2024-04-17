@@ -46,9 +46,7 @@ class SavedMediaScreenViewModel @Inject constructor(
     private val _activeVideo = MutableStateFlow<StatusFile?>(null)
     val activeVideo = _activeVideo.asStateFlow()
 
-    init {
-        getStatusFiles()
-    }
+
 
     fun onChangeActivePhoto(photo:StatusFile?){
         _activePhoto.update { photo }
@@ -73,7 +71,7 @@ class SavedMediaScreenViewModel @Inject constructor(
 
     }
 
-    private fun getStatusFiles(){
+    fun getStatusFiles(){
         viewModelScope.launch {
             val savedStatusFiles = savedStatusRepository.getSavedStatus()
             _statusFiles.update { savedStatusFiles }

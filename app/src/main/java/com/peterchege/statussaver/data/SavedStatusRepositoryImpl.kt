@@ -22,10 +22,11 @@ import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import androidx.core.content.FileProvider
-import com.peterchege.statussaver.core.analytics.analytics.FirebaseAnalyticsHelper
-import com.peterchege.statussaver.core.analytics.analytics.imageDownloaded
-import com.peterchege.statussaver.core.analytics.analytics.videoDownloaded
+import com.peterchege.statussaver.core.firebase.analytics.FirebaseAnalyticsHelper
+import com.peterchege.statussaver.core.firebase.analytics.imageDownloaded
+import com.peterchege.statussaver.core.firebase.analytics.videoDownloaded
 import com.peterchege.statussaver.core.di.IoDispatcher
+import com.peterchege.statussaver.core.firebase.crashlytics.FirebaseLogger
 import com.peterchege.statussaver.core.utils.SingleMediaScanner
 import com.peterchege.statussaver.core.utils.isVideo
 import com.peterchege.statussaver.core.utils.sdk29AndUp
@@ -47,50 +48,65 @@ import javax.inject.Inject
 class SavedStatusRepositoryImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     private val analyticsHelper: FirebaseAnalyticsHelper,
+    private val firebaseLogger: FirebaseLogger,
     private val context: Context,
 ) : SavedStatusRepository {
 
     val TAG = SavedStatusRepositoryImpl::class.java.simpleName
 
     override suspend fun getSavedStatus():List<StatusFile> {
-        return withContext(ioDispatcher){
-            val APP_DIR = context.getExternalFilesDir("StatusDownloader")?.path
-                ?: return@withContext emptyList()
-            val app_dir = File(APP_DIR)
-            Timber.tag(TAG).i("File saved >>> $app_dir")
-            if (!app_dir.exists()) {
-                if (!app_dir.mkdirs()) {
+        return try {
+            withContext(ioDispatcher){
+                val APP_DIR = context.getExternalFilesDir("StatusDownloader")?.path
+                    ?: return@withContext emptyList()
+                val app_dir = File(APP_DIR)
+                Timber.tag(TAG).i("File saved >>> $app_dir")
+                if (!app_dir.exists()) {
+                    Timber.tag(TAG).i("App dir does not exist")
+                    if (!app_dir.mkdirs()) {
+                        Timber.tag(TAG).i("Cannot create directory")
+                        return@withContext emptyList()
+                    }
+                }
+                val savedFiles = sdk29AndUp(
+                    onSdk29 = {
+                        app_dir.listFiles()
+                        Timber.tag(TAG).i("Files in APP DIR ${app_dir.listFiles()}")
+                        Timber.tag(TAG).i("Files in APP DIR ${app_dir.listFiles().size}")
+                        val f = File(Environment.getExternalStoragePublicDirectory(
+                            Environment.DIRECTORY_DCIM
+                        ).toString() + File.separator + "status_saver")
+                        Timber.tag(TAG).i("FILE PATH FOR ANDROID 10 + ${f}")
+                        Timber.tag(TAG).i("Files in f DIR ${f.listFiles()}")
+                        Timber.tag(TAG).i("Files in f ${f.listFiles()?.size}")
+                        f.listFiles()
+
+                    },
+                    onBelowSdk29 = {
+                        app_dir.listFiles()
+                    }
+                )?.toList()
+                Timber.tag(TAG).i("Saved Files $savedFiles")
+                if (savedFiles != null){
+                    val savedStatusFiles = savedFiles.map {
+                        StatusFile(
+                            file = it,
+                            title = it.name ?: "",
+                            path = it.path,
+                            isVideo = it.isVideo(),
+                            documentFile = null,
+                            isApi30 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+                        )
+                    }
+                    return@withContext savedStatusFiles
+                }else{
                     return@withContext emptyList()
                 }
             }
-            val savedFiles = sdk29AndUp(
-                onSdk29 = {
-                    val f = File(
-                        Environment.getExternalStoragePublicDirectory(
-                            Environment.DIRECTORY_DCIM
-                        ).toString() + File.separator + "status_saver"
-                    )
-                    f.listFiles()
-                },
-                onBelowSdk29 = {
-                    app_dir.listFiles()
-                }
-            )?.toList()
-            if (savedFiles != null){
-                val savedStatusFiles = savedFiles.map {
-                    StatusFile(
-                        file = it,
-                        title = it.name ?: "",
-                        path = it.path,
-                        isVideo = it.isVideo(),
-                        documentFile = null,
-                        isApi30 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
-                    )
-                }
-                return@withContext savedStatusFiles
-            }else{
-                return@withContext emptyList()
-            }
+        } catch (e:Exception){
+            firebaseLogger.logException(e)
+            e.printStackTrace()
+            return emptyList()
         }
 
     }
@@ -101,7 +117,9 @@ class SavedStatusRepositoryImpl @Inject constructor(
         val file = File(APP_DIR)
         Timber.tag(TAG).i("File saved >>> $file")
         if (!file.exists()) {
+            Timber.tag(TAG).i("Folder does not exist")
             if (!file.mkdirs()) {
+                Timber.tag(TAG).i("Folder cannot be created")
                 return SaveResult.Failure(msg = "Directory not created ")
             }
         }
@@ -128,8 +146,7 @@ class SavedStatusRepositoryImpl @Inject constructor(
                         Environment.DIRECTORY_DCIM + "/status_saver"
                     )
 
-                    val collectionUri: Uri
-                    collectionUri = if (statusFile.isVideo) {
+                    val collectionUri: Uri = if (statusFile.isVideo) {
                         values.put(MediaStore.MediaColumns.MIME_TYPE, "video/*")
                         MediaStore.Video.Media.getContentUri(
                             MediaStore.VOLUME_EXTERNAL_PRIMARY
@@ -178,6 +195,7 @@ class SavedStatusRepositoryImpl @Inject constructor(
                 }
             )
         } catch (e: IOException) {
+            firebaseLogger.logException(e)
             e.printStackTrace();
             SaveResult.Failure(msg = e.message ?: "Error saving file")
         }

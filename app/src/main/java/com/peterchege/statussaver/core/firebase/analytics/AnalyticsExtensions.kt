@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.peterchege.statussaver.core.analytics.analytics
+package com.peterchege.statussaver.core.firebase.analytics
 
 
-import com.peterchege.statussaver.core.analytics.analytics.AnalyticsEvent.Param
+import com.peterchege.statussaver.core.firebase.analytics.AnalyticsEvent.Param
 
 fun AnalyticsHelper.imageDownloaded() {
     logEvent(

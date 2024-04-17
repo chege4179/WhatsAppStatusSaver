@@ -16,8 +16,7 @@
 package com.peterchege.statussaver
 
 import android.app.Application
-import com.google.firebase.BuildConfig
-import com.peterchege.statussaver.core.analytics.crashlytics.CrashlyticsTree
+import com.peterchege.statussaver.core.firebase.crashlytics.CrashlyticsTree
 import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
 

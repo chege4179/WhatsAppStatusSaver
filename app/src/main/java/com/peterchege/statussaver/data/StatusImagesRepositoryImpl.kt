@@ -19,6 +19,7 @@ import android.content.Context
 import android.os.Environment
 import androidx.documentfile.provider.DocumentFile
 import com.peterchege.statussaver.core.di.IoDispatcher
+import com.peterchege.statussaver.core.firebase.crashlytics.FirebaseLogger
 import com.peterchege.statussaver.core.utils.Constants.STATUS_DIRECTORY
 import com.peterchege.statussaver.core.utils.isVideo
 import com.peterchege.statussaver.core.utils.sdk29AndUp
@@ -27,6 +28,7 @@ import com.peterchege.statussaver.domain.repos.StatusImagesRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
 
@@ -35,8 +37,11 @@ import javax.inject.Inject
 class StatusImagesRepositoryImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     @ApplicationContext private val appContext: Context,
+    private val firebaseLogger: FirebaseLogger,
 ) : StatusImagesRepository {
 
+
+    val TAG = StatusVideosRepositoryImpl::class.java.simpleName
 
     override suspend fun getAllWhatsAppStatusImages(): List<StatusFile> {
         return withContext(ioDispatcher) {
@@ -65,21 +70,31 @@ class StatusImagesRepositoryImpl @Inject constructor(
 
     private fun getWhatsAppStatusImagesGreaterThan29(): List<StatusFile> {
         val list = appContext.contentResolver.persistedUriPermissions;
-        val file = DocumentFile.fromTreeUri(appContext, list[0].uri) ?: return emptyList()
-        val statusFiles = file.listFiles()
-        return statusFiles
-            .filterNot { it.name!!.contains(".nomedia") }
-            .map {
-                StatusFile(
-                    documentFile = it,
-                    isApi30 = true,
-                    isVideo = it.name?.endsWith(".mp4") ?: false,
-                    title = it.name ?: "",
-                    path = null,
-                    file = null
-                )
-            }
-            .filter { !it.isVideo }
+        Timber.tag(TAG).i("Permissions List Count ${list.size}")
+        Timber.tag(TAG).i("Permissions List $list")
+        try {
+            val file = DocumentFile.fromTreeUri(appContext, list[0].uri) ?: return emptyList()
+            val statusFiles = file.listFiles()
+            return statusFiles
+                .filterNot { it.name!!.contains(".nomedia") }
+                .map {
+                    StatusFile(
+                        documentFile = it,
+                        isApi30 = true,
+                        isVideo = it.name?.endsWith(".mp4") ?: false,
+                        title = it.name ?: "",
+                        path = null,
+                        file = null
+                    )
+                }
+                .filter { !it.isVideo }
+        }catch (e:Exception){
+            e.printStackTrace()
+            firebaseLogger.logException(e)
+            return emptyList()
+
+        }
+
     }
 
 }

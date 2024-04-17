@@ -17,9 +17,13 @@ package com.peterchege.statussaver.core.di
 
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
-import com.peterchege.statussaver.core.analytics.analytics.AnalyticsHelper
-import com.peterchege.statussaver.core.analytics.analytics.FirebaseAnalyticsHelper
+import com.peterchege.statussaver.core.firebase.analytics.AnalyticsHelper
+import com.peterchege.statussaver.core.firebase.analytics.FirebaseAnalyticsHelper
+import com.peterchege.statussaver.core.firebase.crashlytics.FirebaseLogger
+import com.peterchege.statussaver.core.firebase.crashlytics.FirebaseLoggerImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -28,7 +32,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object AnalyticsModule  {
+object FirebaseModule  {
 
     @Provides
     @Singleton
@@ -38,8 +42,21 @@ object AnalyticsModule  {
 
     @Provides
     @Singleton
+    fun provideFirebaseCrashlytics(): FirebaseCrashlytics {
+        return Firebase.crashlytics
+    }
+
+    @Provides
+    @Singleton
     fun provideFirebaseAnalyticsHelper(firebaseAnalytics: FirebaseAnalytics): AnalyticsHelper {
         return FirebaseAnalyticsHelper(firebaseAnalytics = firebaseAnalytics)
+
+    }
+
+    @Provides
+    @Singleton
+    fun provideFirebaseLogger(firebaseCrashlytics: FirebaseCrashlytics): FirebaseLogger {
+        return FirebaseLoggerImpl(firebaseCrashlytics = firebaseCrashlytics)
 
     }
 }
