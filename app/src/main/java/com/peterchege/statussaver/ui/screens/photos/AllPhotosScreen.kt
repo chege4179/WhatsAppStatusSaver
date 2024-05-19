@@ -17,6 +17,7 @@ package com.peterchege.statussaver.ui.screens.photos
 
 import android.app.Activity
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -122,27 +123,30 @@ fun AllPhotosScreenContent(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            if (photos.isNotEmpty()) {
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(2),
-                    state = gridState,
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(3.dp),
-                    horizontalArrangement = Arrangement.spacedBy(3.dp)
-                ) {
-                    items(items = photos, key = { photos.indexOf(it) }) {
-                        ImageCard(
-                            saveImage = saveImage,
-                            image = it,
-                            isSaved = false,
-                            shareImage = shareImage,
-                            setActiveImage = onChangeActiveStatusFile
-                        )
+            AnimatedContent(targetState = photos.isNotEmpty(), label = "photos") {
+                if (it) {
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(2),
+                        state = gridState,
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.spacedBy(3.dp),
+                        horizontalArrangement = Arrangement.spacedBy(3.dp)
+                    ) {
+                        items(items = photos, key = { photos.indexOf(it) }) {
+                            ImageCard(
+                                saveImage = saveImage,
+                                image = it,
+                                isSaved = false,
+                                shareImage = shareImage,
+                                setActiveImage = onChangeActiveStatusFile
+                            )
+                        }
                     }
+                } else {
+                    Text(text = stringResource(id = R.string.no_whatsapp_images_found))
                 }
-            } else {
-                Text(text = stringResource(id = R.string.no_whatsapp_images_found))
             }
+
         }
         if (activePhoto != null) {
             FullScreenPhoto(

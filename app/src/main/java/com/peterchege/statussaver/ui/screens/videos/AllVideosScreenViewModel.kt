@@ -80,7 +80,12 @@ class AllVideosScreenViewModel @Inject constructor(
 
     fun onChangeActiveVideo(statusFile: StatusFile?) {
         _activeVideo.update { statusFile }
-        statusFile?.file?.toUri()?.let { playVideo(it) }
+        if (statusFile == null) {
+            stopPlayer()
+            return
+        }
+        val uri =  if (statusFile.isApi30) statusFile.documentFile?.uri else statusFile?.file?.toUri()
+        uri?.let { playVideo(it) }
     }
 
     fun playVideo(uri: Uri) {

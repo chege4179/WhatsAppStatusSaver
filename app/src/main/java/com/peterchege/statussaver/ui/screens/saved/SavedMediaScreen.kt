@@ -121,7 +121,7 @@ fun SavedMediaScreenContent(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(text = stringResource(id = R.string.saved_status) + "${statusFiles.size}")
+                    Text(text = stringResource(id = R.string.saved_status))
                 }
             )
         },

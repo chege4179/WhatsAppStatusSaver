@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,6 +39,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.media3.common.Player
 import androidx.media3.ui.PlayerView
 import com.peterchege.statussaver.domain.models.StatusFile
+import timber.log.Timber
 
 @Composable
 fun FullScreenVideo(
@@ -47,6 +49,10 @@ fun FullScreenVideo(
     modifier: Modifier = Modifier,
     onSave:(StatusFile) -> Unit
 ) {
+    LaunchedEffect(key1 = Unit) {
+        Timber.tag("FullScreenVideo").d("Player ${photo.documentFile?.uri.toString()}")
+
+    }
     Box(
         modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -63,8 +69,7 @@ fun VideoPlayer(
     player: Player,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
-    val uri = if (photo.isApi30) photo.documentFile?.uri else photo.file?.toUri()
+
     var lifecycle by remember {
         mutableStateOf(Lifecycle.Event.ON_CREATE)
     }

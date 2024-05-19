@@ -17,6 +17,7 @@ package com.peterchege.statussaver.ui.screens.videos
 
 import android.app.Activity
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -64,10 +65,10 @@ fun AllVideosScreen(
 
     val activity = (LocalContext.current as? Activity)
     BackHandler {
-        if (activeVideo != null){
+        if (activeVideo != null) {
             viewModel.stopPlayer()
             viewModel.onChangeActiveVideo(null)
-        }else{
+        } else {
             activity?.finish()
         }
     }
@@ -124,27 +125,30 @@ fun AllVideosScreenContent(
             verticalArrangement = Arrangement.Center
         ) {
             val gridState = rememberLazyGridState()
-            if (videos.isNotEmpty()) {
-                LazyVerticalGrid(
-                    columns = GridCells.Adaptive(128.dp),
-                    state = gridState,
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(3.dp),
-                    horizontalArrangement = Arrangement.spacedBy(3.dp)
-                ) {
-                    items(items = videos) {
-                        VideoCard(
-                            video = it,
-                            isSaved = false,
-                            shareVideo = shareVideo,
-                            saveVideo = saveStatus,
-                            setActiveVideo = onChangeActiveVideo
-                        )
+            AnimatedContent(targetState = videos.isNotEmpty(), label = "Videos") {
+                if (it) {
+                    LazyVerticalGrid(
+                        columns = GridCells.Adaptive(128.dp),
+                        state = gridState,
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.spacedBy(3.dp),
+                        horizontalArrangement = Arrangement.spacedBy(3.dp)
+                    ) {
+                        items(items = videos) {
+                            VideoCard(
+                                video = it,
+                                isSaved = false,
+                                shareVideo = shareVideo,
+                                saveVideo = saveStatus,
+                                setActiveVideo = onChangeActiveVideo
+                            )
+                        }
                     }
+                } else {
+                    Text(text = stringResource(id = R.string.no_saved_videos_found))
                 }
-            } else {
-                Text(text = stringResource(id = R.string.no_saved_videos_found))
             }
+
         }
         if (activeVideo != null) {
             FullScreenVideo(
