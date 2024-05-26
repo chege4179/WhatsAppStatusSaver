@@ -101,7 +101,7 @@ class MainActivity : ComponentActivity() {
             )
         }
         setContent {
-            WhatsAppStatusSaverTheme {
+            WhatsAppStatusSaverTheme(darkTheme = false) {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
