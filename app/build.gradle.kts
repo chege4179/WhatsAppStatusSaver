@@ -17,6 +17,10 @@ plugins {
 
 }
 
+secrets {
+    defaultPropertiesFileName = "local.properties"
+}
+
 android {
     namespace = "com.peterchege.statussaver"
     compileSdk = 34
