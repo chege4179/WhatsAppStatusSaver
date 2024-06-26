@@ -15,6 +15,7 @@
  */
 package com.peterchege.statussaver.ui.navigation
 
+import android.app.Activity
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -39,6 +40,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
@@ -46,6 +48,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.peterchege.statussaver.core.utils.Screens
 import com.peterchege.statussaver.domain.models.BottomNavItem
 import com.peterchege.statussaver.domain.models.StatusFile
@@ -88,8 +91,10 @@ fun BottomNavBar(
 fun BottomNavigation(
     shareImage: (StatusFile) -> Unit,
     shareVideo: (StatusFile) -> Unit,
+    interstitialAd: InterstitialAd?,
 ) {
     val navController = rememberNavController()
+    val activity = LocalContext.current as Activity
     Scaffold(
         bottomBar = {
             BottomNavBar(
@@ -131,25 +136,23 @@ fun BottomNavigation(
         ) {
             NavHost(
                 navController = navController,
-                startDestination = Screens.ALL_WHATSAPP_IMAGES_SCREEN
+                startDestination = Screens.ALL_WHATSAPP_IMAGES_SCREEN,
+                enterTransition = { scaleInEnterTransition() },
+                exitTransition = { scaleOutExitTransition() },
+                popEnterTransition = { scaleInPopEnterTransition() },
+                popExitTransition = { scaleOutPopExitTransition() },
             ) {
                 composable(
                     route = Screens.ALL_WHATSAPP_IMAGES_SCREEN,
-                    enterTransition = { scaleInEnterTransition() },
-                    exitTransition = { scaleOutExitTransition() },
-                    popEnterTransition = { scaleInPopEnterTransition() },
-                    popExitTransition = { scaleOutPopExitTransition() },
+
                 ) {
                     AllPhotosScreen(
+                        interstitialAd = interstitialAd,
                         shareImage = shareImage,
                     )
                 }
                 composable(
                     route = Screens.ALL_WHATSAPP_VIDEOS_SCREEN,
-                    enterTransition = { scaleInEnterTransition() },
-                    exitTransition = { scaleOutExitTransition() },
-                    popEnterTransition = { scaleInPopEnterTransition() },
-                    popExitTransition = { scaleOutPopExitTransition() },
                 ) {
                     AllVideosScreen(
                         shareVideo = shareVideo
@@ -158,10 +161,6 @@ fun BottomNavigation(
 
                 composable(
                     route = Screens.ALL_SAVED_MEDIA_SCREEN,
-                    enterTransition = { scaleInEnterTransition() },
-                    exitTransition = { scaleOutExitTransition() },
-                    popEnterTransition = { scaleInPopEnterTransition() },
-                    popExitTransition = { scaleOutPopExitTransition() },
                 ) {
                     SavedMediaScreen(
                         shareVideo = shareVideo,

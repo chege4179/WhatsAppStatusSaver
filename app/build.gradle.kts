@@ -13,6 +13,7 @@ plugins {
     id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
     id("com.google.firebase.firebase-perf")
+    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 
 }
 
@@ -74,6 +75,7 @@ android {
         jvmTarget = JavaVersion.VERSION_17.toString()
     }
     buildFeatures {
+        buildConfig = true
         compose = true
     }
     packaging {
@@ -158,4 +160,7 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-crashlytics")
     implementation("com.google.firebase:firebase-perf")
+
+
+    implementation ("com.google.android.gms:play-services-ads:23.1.0")
 }
