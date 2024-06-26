@@ -41,9 +41,5 @@ jobs:
           restore-keys: |
              ${{ runner.os }}-gradle-    
 
-
       - name: Build App with Gradle and upload to Firebase app distribution
         run: ./gradlew assembleRelease appDistributionUploadRelease
-
-
-

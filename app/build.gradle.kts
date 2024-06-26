@@ -19,6 +19,7 @@ plugins {
 
 secrets {
     defaultPropertiesFileName = "local.properties"
+    propertiesFileName = "local.properties"
 }
 
 android {
