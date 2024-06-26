@@ -22,6 +22,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
@@ -54,6 +55,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.Player
 import com.peterchege.statussaver.R
 import com.peterchege.statussaver.domain.models.StatusFile
+import com.peterchege.statussaver.ui.components.AdmobBanner
 import com.peterchege.statussaver.ui.screens.saved.photos.SavedPhotosScreen
 import com.peterchege.statussaver.ui.screens.saved.videos.SavedVideosScreen
 import kotlinx.coroutines.launch
@@ -181,6 +183,7 @@ fun SavedMediaScreenContent(
             val savedVideos = remember(statusFiles) {
                 statusFiles.filter { it.isVideo }
             }
+            AdmobBanner(modifier = Modifier.fillMaxWidth())
             HorizontalPager(state = pagerState) {
                 AnimatedContent(
                     targetState = pagerState,

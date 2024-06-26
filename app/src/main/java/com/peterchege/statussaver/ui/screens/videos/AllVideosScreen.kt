@@ -21,6 +21,7 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -53,6 +54,7 @@ import com.peterchege.statussaver.ui.components.VideoCard
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import com.peterchege.statussaver.R
+import com.peterchege.statussaver.ui.components.AdmobBanner
 
 @Composable
 fun AllVideosScreen(
@@ -125,6 +127,7 @@ fun AllVideosScreenContent(
             verticalArrangement = Arrangement.Center
         ) {
             val gridState = rememberLazyGridState()
+            AdmobBanner(modifier = Modifier.fillMaxWidth())
             AnimatedContent(targetState = videos.isNotEmpty(), label = "Videos") {
                 if (it) {
                     LazyVerticalGrid(

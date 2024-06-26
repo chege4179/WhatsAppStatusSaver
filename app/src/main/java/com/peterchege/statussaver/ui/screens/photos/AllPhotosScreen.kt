@@ -50,18 +50,22 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.SubcomposeAsyncImage
+import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.peterchege.statussaver.domain.models.StatusFile
 import com.peterchege.statussaver.ui.components.FullScreenPhoto
 import com.peterchege.statussaver.ui.components.ImageCard
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import com.peterchege.statussaver.R
+import com.peterchege.statussaver.ui.components.AdmobBanner
 
 @Composable
 fun AllPhotosScreen(
+    interstitialAd: InterstitialAd?,
     viewModel: AllPhotosScreenViewModel = hiltViewModel(),
     shareImage: (StatusFile) -> Unit,
 ) {
+
     val photos by viewModel.photos.collectAsStateWithLifecycle()
     val activePhoto by viewModel.activePhoto.collectAsStateWithLifecycle()
     val activity = (LocalContext.current as? Activity)
@@ -77,7 +81,13 @@ fun AllPhotosScreen(
         activePhoto = activePhoto,
         onChangeActiveStatusFile = viewModel::onChangeActivePhoto,
         eventFlow = viewModel.eventFlow,
-        saveImage = viewModel::savePhoto,
+        saveImage = {
+            viewModel.savePhoto(it)
+            if (activity != null) {
+                interstitialAd?.show(activity)
+            }
+        },
+
         shareImage = shareImage,
     )
 }
@@ -123,6 +133,7 @@ fun AllPhotosScreenContent(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
+            AdmobBanner(modifier = Modifier.fillMaxWidth())
             AnimatedContent(targetState = photos.isNotEmpty(), label = "photos") {
                 if (it) {
                     LazyVerticalGrid(

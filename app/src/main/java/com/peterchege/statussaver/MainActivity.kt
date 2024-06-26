@@ -31,20 +31,43 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.ActivityCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.FullScreenContentCallback
+import com.google.android.gms.ads.LoadAdError
+import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.interstitial.InterstitialAd
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
+import com.peterchege.statussaver.core.di.IoDispatcher
 import com.peterchege.statussaver.ui.navigation.BottomNavigation
 import com.peterchege.statussaver.ui.theme.WhatsAppStatusSaverTheme
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     val TAG = MainActivity::class.java.simpleName
 
+    @Inject
+    @IoDispatcher
+    lateinit var ioDispatcher: CoroutineDispatcher
+
+    var AD_UNIT_ID =
+        if (BuildConfig.DEBUG) BuildConfig.ADMOB_INTERSTITIAL_TEST_ID else BuildConfig.ADMOB_INTERSTITIAL_PROD_ID
 
 
     private val REQUEST_PERMISSIONS = 1234
@@ -100,7 +123,65 @@ class MainActivity : ComponentActivity() {
                 NOTIFICATION_REQUEST_PERMISSIONS
             )
         }
+        val backgroundScope = CoroutineScope(ioDispatcher)
+        backgroundScope.launch {
+            // Initialize the Google Mobile Ads SDK on a background thread.
+            MobileAds.initialize(this@MainActivity) {}
+        }
+
+
+        var adRequest = AdRequest.Builder().build()
+
+
         setContent {
+            val context = LocalContext.current
+
+            var interStitialAd by remember {
+                mutableStateOf<InterstitialAd?>(null)
+            }
+
+            LaunchedEffect(key1 = Unit) {
+                InterstitialAd.load(context, AD_UNIT_ID, adRequest, object : InterstitialAdLoadCallback() {
+                    override fun onAdFailedToLoad(adError: LoadAdError) {
+                        Timber.tag(TAG).d("Failed to load ADs ${adError.message}")
+                        interStitialAd = null
+                    }
+
+                    override fun onAdLoaded(interstitialAd: InterstitialAd) {
+                        Timber.tag(TAG).d("AD loaded")
+                        interStitialAd = interstitialAd
+
+
+                    }
+                })
+
+
+                interStitialAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
+                    override fun onAdClicked() {
+                        // Called when a click is recorded for an ad.
+                        Timber.tag(TAG).d("Ad was clicked.")
+                    }
+
+                    override fun onAdDismissedFullScreenContent() {
+                        // Called when ad is dismissed.
+                        Timber.tag(TAG).d("Ad dismissed fullscreen content.")
+                        interStitialAd = null
+                    }
+
+
+                    override fun onAdImpression() {
+                        // Called when an impression is recorded for an ad.
+                        Timber.tag(TAG).d("Ad recorded an impression.")
+                    }
+
+                    override fun onAdShowedFullScreenContent() {
+                        // Called when ad is shown.
+                        Timber.tag(TAG).d("Ad showed fullscreen content.")
+                    }
+                }
+            }
+
+
             WhatsAppStatusSaverTheme(darkTheme = false) {
                 // A surface container using the 'background' color from the theme
                 Surface(
@@ -109,6 +190,7 @@ class MainActivity : ComponentActivity() {
                 ) {
 
                     BottomNavigation(
+                        interstitialAd = interStitialAd,
                         shareImage = {
                             val shareIntent = Intent(Intent.ACTION_SEND)
                             shareIntent.setType("image/jpg")
