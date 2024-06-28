@@ -18,7 +18,7 @@ plugins {
 }
 
 secrets {
-    defaultPropertiesFileName = "local.properties"
+    defaultPropertiesFileName = "local.default.properties"
     propertiesFileName = "local.properties"
 }
 
