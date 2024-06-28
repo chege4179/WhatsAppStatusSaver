@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,9 +45,11 @@ import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.IntSize
 import androidx.core.net.toUri
+import coil.compose.AsyncImage
 import coil.compose.SubcomposeAsyncImage
 import com.peterchege.statussaver.R
 import com.peterchege.statussaver.domain.models.StatusFile
+import timber.log.Timber
 
 @Composable
 fun FullScreenPhoto(
@@ -55,6 +58,9 @@ fun FullScreenPhoto(
     saveImage:(StatusFile) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    LaunchedEffect(key1 = photo) {
+        Timber.tag("FullScreenPhoto").i("Photo $photo")
+    }
     Box(
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -64,7 +70,7 @@ fun FullScreenPhoto(
             modifier = Modifier.fillMaxSize(),
             onSave = { saveImage(photo) }
         )
-        PhotoImage(photo)
+        PhotoImage(photo = photo)
     }
 }
 
@@ -74,11 +80,11 @@ fun PhotoImage(photo: StatusFile, modifier: Modifier = Modifier) {
     var offset by remember { mutableStateOf(Offset.Zero) }
     var zoom by remember { mutableStateOf(1f) }
 
-    val uri = if (photo.isApi30) photo.documentFile?.uri else photo.file?.toUri()
-    SubcomposeAsyncImage(
-        model = uri,
+
+    AsyncImage(
+        model = photo.file,
         contentDescription = photo.title,
-        modifier
+        modifier = modifier
             .clipToBounds()
             .pointerInput(Unit) {
                 detectTapGestures(
