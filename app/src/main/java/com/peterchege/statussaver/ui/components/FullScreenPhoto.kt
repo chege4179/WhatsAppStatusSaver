@@ -56,6 +56,7 @@ fun FullScreenPhoto(
     photo: StatusFile,
     onDismiss: () -> Unit,
     saveImage:(StatusFile) -> Unit,
+    isSaved: Boolean,
     modifier: Modifier = Modifier
 ) {
     LaunchedEffect(key1 = photo) {
@@ -70,19 +71,24 @@ fun FullScreenPhoto(
             modifier = Modifier.fillMaxSize(),
             onSave = { saveImage(photo) }
         )
-        PhotoImage(photo = photo)
+        PhotoImage(photo = photo,isSaved = isSaved)
     }
 }
 
 
 @Composable
-fun PhotoImage(photo: StatusFile, modifier: Modifier = Modifier) {
+fun PhotoImage(photo: StatusFile, modifier: Modifier = Modifier,isSaved:Boolean) {
     var offset by remember { mutableStateOf(Offset.Zero) }
     var zoom by remember { mutableStateOf(1f) }
 
 
+    val whatsappUri = if (photo.isApi30) photo.documentFile?.uri else photo.file?.toUri()
+    val savedUri = photo.file
+    val uri = if (isSaved) savedUri else whatsappUri
+
+
     AsyncImage(
-        model = photo.file,
+        model = uri,
         contentDescription = photo.title,
         modifier = modifier
             .clipToBounds()

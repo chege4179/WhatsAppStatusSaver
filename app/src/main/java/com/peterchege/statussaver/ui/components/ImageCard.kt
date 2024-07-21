@@ -42,6 +42,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
+import coil.compose.AsyncImage
 import coil.compose.SubcomposeAsyncImage
 import com.peterchege.statussaver.domain.models.StatusFile
 import com.peterchege.statussaver.R
@@ -67,7 +68,7 @@ fun ImageCard(
 
 
     ) {
-        SubcomposeAsyncImage(
+        AsyncImage(
             modifier = Modifier
                 .height(128.dp)
                 .fillMaxWidth()

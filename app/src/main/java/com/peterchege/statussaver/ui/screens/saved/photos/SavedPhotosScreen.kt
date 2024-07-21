@@ -78,7 +78,8 @@ fun SavedPhotosScreen(
         FullScreenPhoto(
             photo = activePhoto,
             onDismiss = { onChangeActivePhoto(null) },
-            saveImage = saveImage
+            saveImage = saveImage,
+            isSaved = true
         )
     }
 }

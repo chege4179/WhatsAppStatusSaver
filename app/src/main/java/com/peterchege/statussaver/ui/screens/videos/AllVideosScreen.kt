@@ -66,7 +66,7 @@ fun AllVideosScreen(
     val player = viewModel.getPlayer()
 
     val activity = (LocalContext.current as? Activity)
-    BackHandler {
+    BackHandler(enabled = activeVideo != null) {
         if (activeVideo != null) {
             viewModel.stopPlayer()
             viewModel.onChangeActiveVideo(null)
