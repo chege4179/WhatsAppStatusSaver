@@ -1,6 +1,13 @@
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+import java.util.Properties
 
-val keyPasswordString: String = gradleLocalProperties(rootDir).getProperty("keyPassword")
+
+val localPropertiesFile = project.rootProject.file("local.properties")
+val properties = Properties()
+properties.load(localPropertiesFile.inputStream())
+val keyPasswordString = properties.getProperty("keyPassword") ?: ""
+
+
 plugins {
     id("com.android.application")
     kotlin("android")
