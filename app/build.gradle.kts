@@ -7,6 +7,8 @@ val properties = Properties()
 properties.load(localPropertiesFile.inputStream())
 val keyPasswordString = properties.getProperty("keyPassword") ?: ""
 
+println("Key Password >>>>>>>>: ${keyPasswordString.take(13)}")
+println("Key Password 20 >>>>>>>>: ${keyPasswordString.take(20)}")
 println("Key Password >>>>>>>>: $keyPasswordString")
 
 plugins {
@@ -53,8 +55,8 @@ android {
         create("release"){
             storeFile = file("status_saver.jks")
             keyAlias = "status_saver"
-            keyPassword = keyPasswordString
-            storePassword =  keyPasswordString
+            keyPassword = keyPasswordString.take(13)
+            storePassword =  keyPasswordString.take(13)
         }
     }
     buildTypes {
