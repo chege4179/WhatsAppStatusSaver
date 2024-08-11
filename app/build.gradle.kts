@@ -7,6 +7,7 @@ val properties = Properties()
 properties.load(localPropertiesFile.inputStream())
 val keyPasswordString = properties.getProperty("keyPassword") ?: ""
 
+println("Key Password >>>>>>>>: $keyPasswordString")
 
 plugins {
     id("com.android.application")
@@ -37,8 +38,8 @@ android {
         applicationId = "com.peterchege.statussaver"
         minSdk = 24
         targetSdk = 34
-        versionCode = 3
-        versionName = "1.0.3"
+        versionCode = 4
+        versionName = "1.0.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

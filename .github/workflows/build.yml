@@ -10,7 +10,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-
       - name: Create Local Properties File
         run: cat /home/runner/work/WhatsAppStatusSaver/WhatsAppStatusSaver/local.properties | base64
 
