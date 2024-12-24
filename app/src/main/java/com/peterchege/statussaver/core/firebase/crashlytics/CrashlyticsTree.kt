@@ -28,7 +28,7 @@ class CrashlyticsTree : Timber.Tree() {
         }
 
         if (BuildConfig.DEBUG) {
-            crashlytics.setCrashlyticsCollectionEnabled(false)
+            crashlytics.isCrashlyticsCollectionEnabled = false
             return
         }
 

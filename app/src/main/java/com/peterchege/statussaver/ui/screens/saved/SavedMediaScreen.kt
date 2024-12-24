@@ -59,6 +59,7 @@ import com.peterchege.statussaver.ui.components.AdmobBanner
 import com.peterchege.statussaver.ui.screens.saved.photos.SavedPhotosScreen
 import com.peterchege.statussaver.ui.screens.saved.videos.SavedVideosScreen
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @Composable
 fun SavedMediaScreen(
@@ -66,6 +67,7 @@ fun SavedMediaScreen(
     shareImage: (StatusFile) -> Unit,
     shareVideo: (StatusFile) -> Unit,
 ) {
+    val TAG = "SavedMediaScreen"
     LaunchedEffect(key1 = Unit) {
         viewModel.getStatusFiles()
     }
@@ -74,6 +76,11 @@ fun SavedMediaScreen(
     val activePhoto by viewModel.activePhoto.collectAsStateWithLifecycle()
 
     val activity = (LocalContext.current as? Activity)
+
+    LaunchedEffect(statusFiles) {
+
+        Timber.tag(TAG).i("Status Files $statusFiles")
+    }
     BackHandler {
         if (activeVideo != null){
             viewModel.stopPlayer()

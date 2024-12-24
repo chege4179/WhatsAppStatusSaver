@@ -20,18 +20,13 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -49,15 +44,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.SubcomposeAsyncImage
 import com.google.android.gms.ads.interstitial.InterstitialAd
+import com.peterchege.statussaver.R
 import com.peterchege.statussaver.domain.models.StatusFile
+import com.peterchege.statussaver.ui.components.AdmobBanner
+import com.peterchege.statussaver.ui.components.AppLoader
 import com.peterchege.statussaver.ui.components.FullScreenPhoto
 import com.peterchege.statussaver.ui.components.ImageCard
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collectLatest
-import com.peterchege.statussaver.R
-import com.peterchege.statussaver.ui.components.AdmobBanner
 
 @Composable
 fun AllPhotosScreen(
@@ -66,28 +61,28 @@ fun AllPhotosScreen(
     shareImage: (StatusFile) -> Unit,
 ) {
 
-    val photos by viewModel.photos.collectAsStateWithLifecycle()
-    val activePhoto by viewModel.activePhoto.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val activity = (LocalContext.current as? Activity)
     BackHandler {
-        if (activePhoto != null) {
+        if (uiState.activePhoto != null) {
             viewModel.onChangeActivePhoto(null)
         } else {
             activity?.finish()
         }
     }
+
+    LaunchedEffect(key1 = true){
+        viewModel.loadImages()
+    }
     AllPhotosScreenContent(
-        photos = photos,
-        activePhoto = activePhoto,
+        isLoading = uiState.isLoading,
+        photos = uiState.photos,
+        activePhoto = uiState.activePhoto,
         onChangeActiveStatusFile = viewModel::onChangeActivePhoto,
         eventFlow = viewModel.eventFlow,
         saveImage = {
             viewModel.savePhoto(it)
-            if (activity != null) {
-                interstitialAd?.show(activity)
-            }
         },
-
         shareImage = shareImage,
     )
 }
@@ -96,6 +91,7 @@ fun AllPhotosScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AllPhotosScreenContent(
+    isLoading:Boolean,
     photos: List<StatusFile>,
     activePhoto: StatusFile?,
     onChangeActiveStatusFile: (StatusFile?) -> Unit,
@@ -133,6 +129,7 @@ fun AllPhotosScreenContent(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
+            AppLoader(isLoading = isLoading)
             AdmobBanner(modifier = Modifier.fillMaxWidth())
             AnimatedContent(targetState = photos.isNotEmpty(), label = "photos") {
                 if (it) {

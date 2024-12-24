@@ -30,9 +30,7 @@ fun CustomIconButton(
 ) {
     IconButton(
         modifier = modifier,
-        onClick = {
-            onClick()
-        }
+        onClick = onClick
     ) {
         Icon(
             imageVector = imageVector,

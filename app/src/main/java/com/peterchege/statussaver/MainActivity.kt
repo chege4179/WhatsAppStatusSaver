@@ -40,7 +40,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.ActivityCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.FullScreenContentCallback
 import com.google.android.gms.ads.LoadAdError
@@ -57,7 +56,10 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
-@OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
+
+
+
+@OptIn(ExperimentalMaterial3Api::class)
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     val TAG = MainActivity::class.java.simpleName
@@ -66,7 +68,7 @@ class MainActivity : ComponentActivity() {
     @IoDispatcher
     lateinit var ioDispatcher: CoroutineDispatcher
 
-    var AD_UNIT_ID =
+    private var AD_UNIT_ID =
         if (BuildConfig.DEBUG) BuildConfig.ADMOB_INTERSTITIAL_TEST_ID else BuildConfig.ADMOB_INTERSTITIAL_PROD_ID
 
 

@@ -42,32 +42,29 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
+import com.peterchege.statussaver.R
 import com.peterchege.statussaver.domain.models.StatusFile
+import com.peterchege.statussaver.ui.components.AdmobBanner
+import com.peterchege.statussaver.ui.components.AppLoader
 import com.peterchege.statussaver.ui.components.FullScreenVideo
-import com.peterchege.statussaver.ui.components.ImageCard
 import com.peterchege.statussaver.ui.components.VideoCard
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collectLatest
-import com.peterchege.statussaver.R
-import com.peterchege.statussaver.ui.components.AdmobBanner
 
 @Composable
 fun AllVideosScreen(
     viewModel: AllVideosScreenViewModel = hiltViewModel(),
     shareVideo: (StatusFile) -> Unit,
 ) {
-    val videos by viewModel.videos.collectAsStateWithLifecycle()
-    val activeVideo by viewModel.activeVideo.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val player = viewModel.getPlayer()
 
     val activity = (LocalContext.current as? Activity)
-    BackHandler(enabled = activeVideo != null) {
-        if (activeVideo != null) {
+    BackHandler(enabled = uiState.activeVideo != null) {
+        if (uiState.activeVideo != null) {
             viewModel.stopPlayer()
             viewModel.onChangeActiveVideo(null)
         } else {
@@ -75,16 +72,16 @@ fun AllVideosScreen(
         }
     }
 
+    AppLoader(isLoading = uiState.isLoading)
     AllVideosScreenContent(
-        videos = videos,
-        activeVideo = activeVideo,
+        videos =uiState.videos,
+        activeVideo = uiState.activeVideo,
         player = player,
         onChangeActiveVideo = viewModel::onChangeActiveVideo,
         saveStatus = viewModel::saveVideo,
         eventFlow = viewModel.eventFlow,
         shareVideo = shareVideo,
     )
-
 }
 
 

@@ -31,6 +31,12 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
+data class AllPhotosScreenState(
+    val isLoading:Boolean = false,
+    val photos:List<StatusFile> = emptyList(),
+    val activePhoto:StatusFile? = null,
+)
+
 @HiltViewModel
 class AllPhotosScreenViewModel @Inject constructor(
     private val imagesRepository: StatusImagesRepository,
@@ -38,32 +44,28 @@ class AllPhotosScreenViewModel @Inject constructor(
 ): ViewModel() {
     private val TAG = AllPhotosScreenViewModel::class.java.simpleName
 
-    private val _photos = MutableStateFlow<List<StatusFile>>(emptyList())
-    val photos = _photos.asStateFlow()
+    private val _uiState = MutableStateFlow(AllPhotosScreenState())
+    val uiState = _uiState.asStateFlow()
+
 
     private val _eventFlow = MutableSharedFlow<String>()
     val eventFlow = _eventFlow.asSharedFlow()
 
-    private val _activePhoto = MutableStateFlow<StatusFile?>(null)
-    val activePhoto = _activePhoto.asStateFlow()
 
-    init {
-        loadImages()
-    }
-
-
-    private fun loadImages(){
+    fun loadImages(){
         viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true) }
             val newPhotos = imagesRepository.getAllWhatsAppStatusImages()
             Timber.tag(TAG).i("Photos >>>> ${newPhotos}")
-            _photos.update {
-                newPhotos ?: it
+            _uiState.update {
+                it.copy(photos = newPhotos ?: emptyList(), isLoading = false)
             }
         }
     }
 
     fun onChangeActivePhoto(photo:StatusFile?){
-        _activePhoto.update { photo }
+        _uiState.update { it.copy(activePhoto = photo) }
+
     }
 
     fun savePhoto(photo: StatusFile){

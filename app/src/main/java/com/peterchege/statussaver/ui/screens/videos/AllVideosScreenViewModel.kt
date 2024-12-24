@@ -35,6 +35,12 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
+data class AllVideosScreenState(
+    val isLoading:Boolean = false,
+    val videos:List<StatusFile> = emptyList(),
+    val activeVideo:StatusFile? = null,
+)
+
 @HiltViewModel
 class AllVideosScreenViewModel @Inject constructor(
     private val videosRepository: StatusVideosRepository,
@@ -44,11 +50,8 @@ class AllVideosScreenViewModel @Inject constructor(
 
     val TAG = AllVideosScreenViewModel::class.java.simpleName
 
-    private val _videos = MutableStateFlow<List<StatusFile>>(emptyList())
-    val videos = _videos.asStateFlow()
-
-    private val _activeVideo = MutableStateFlow<StatusFile?>(null)
-    val activeVideo = _activeVideo.asStateFlow()
+    private val _uiState = MutableStateFlow(AllVideosScreenState())
+    val uiState = _uiState.asStateFlow()
 
     private val _eventFlow = MutableSharedFlow<String>()
     val eventFlow = _eventFlow.asSharedFlow()
@@ -70,16 +73,18 @@ class AllVideosScreenViewModel @Inject constructor(
 
     private fun loadVideos() {
         viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true) }
             val newVideos = videosRepository.getAllWhatsAppStatusVideos()
-
             Timber.tag(TAG).i("Videos >>>> ${newVideos}")
-            _videos.update { newVideos ?: it }
-
+            _uiState.update {
+                it.copy(videos = newVideos ?: emptyList(), isLoading = false)
+            }
         }
     }
 
     fun onChangeActiveVideo(statusFile: StatusFile?) {
-        _activeVideo.update { statusFile }
+        _uiState.update { it.copy(activeVideo = statusFile) }
+
         if (statusFile == null) {
             stopPlayer()
             return
@@ -94,7 +99,7 @@ class AllVideosScreenViewModel @Inject constructor(
     }
 
     fun findStatusFileByName(videoName: String): StatusFile? {
-        return _videos.value.find { it.title == videoName }
+        return _uiState.value.videos.find { it.title == videoName }
     }
 
     fun saveVideo(photo: StatusFile){

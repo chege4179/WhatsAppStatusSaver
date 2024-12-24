@@ -16,7 +16,6 @@
 package com.peterchege.statussaver.data
 
 import android.content.Context
-import android.os.Environment
 import androidx.documentfile.provider.DocumentFile
 import com.peterchege.statussaver.core.di.IoDispatcher
 import com.peterchege.statussaver.core.firebase.crashlytics.FirebaseLogger
@@ -29,7 +28,6 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-import java.io.File
 import javax.inject.Inject
 
 
