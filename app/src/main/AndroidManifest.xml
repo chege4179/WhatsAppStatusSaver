@@ -51,14 +51,13 @@
 
         </provider>
         <meta-data
-
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="${ADMOB_APP_ID}"
             />
-        <property
-            android:name="android.adservices.AD_SERVICES_CONFIG"
-            android:resource="@xml/gma_ad_services_config"
-            tools:replace="android:resource" />
+<!--        <property-->
+<!--            android:name="android.adservices.AD_SERVICES_CONFIG"-->
+<!--            android:resource="@xml/gma_ad_services_config"-->
+<!--            tools:replace="android:resource" />-->
     </application>
 
 </manifest>

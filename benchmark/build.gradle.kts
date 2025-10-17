@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.peterchege.benchmark"
-    compileSdk = 34
+    compileSdk = 36
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -18,7 +18,7 @@ android {
 
     defaultConfig {
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -39,10 +39,10 @@ android {
 }
 
 dependencies {
-    implementation("androidx.test.ext:junit:1.1.5")
-    implementation("androidx.test.espresso:espresso-core:3.5.1")
-    implementation("androidx.test.uiautomator:uiautomator:2.2.0")
-    implementation("androidx.benchmark:benchmark-macro-junit4:1.2.2")
+    implementation("androidx.test.ext:junit:1.3.0")
+    implementation("androidx.test.espresso:espresso-core:3.7.0")
+    implementation("androidx.test.uiautomator:uiautomator:2.3.0")
+    implementation("androidx.benchmark:benchmark-macro-junit4:1.4.1")
 }
 
 androidComponents {

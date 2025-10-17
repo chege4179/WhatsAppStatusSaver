@@ -15,13 +15,7 @@
  */
 package com.peterchege.statussaver.core.utils
 
-import android.content.Context
-import android.graphics.Bitmap
-import android.media.MediaMetadataRetriever
-import android.net.Uri
 import android.os.Build
-import androidx.media3.common.FileTypes.MP4
-import timber.log.Timber
 import java.io.File
 
 inline fun <T> sdk29AndUp(onSdk29: () -> T,onBelowSdk29:() -> T ): T {

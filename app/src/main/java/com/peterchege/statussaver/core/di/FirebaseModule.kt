@@ -15,11 +15,11 @@
  */
 package com.peterchege.statussaver.core.di
 
+import com.google.firebase.Firebase
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.analytics.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import com.google.firebase.crashlytics.ktx.crashlytics
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.crashlytics.crashlytics
 import com.peterchege.statussaver.core.firebase.analytics.AnalyticsHelper
 import com.peterchege.statussaver.core.firebase.analytics.FirebaseAnalyticsHelper
 import com.peterchege.statussaver.core.firebase.crashlytics.FirebaseLogger

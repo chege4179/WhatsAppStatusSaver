@@ -43,7 +43,6 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.FullScreenContentCallback
 import com.google.android.gms.ads.LoadAdError
-import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.peterchege.statussaver.core.di.IoDispatcher
@@ -51,12 +50,8 @@ import com.peterchege.statussaver.ui.navigation.BottomNavigation
 import com.peterchege.statussaver.ui.theme.WhatsAppStatusSaverTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
-
-
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -125,11 +120,7 @@ class MainActivity : ComponentActivity() {
                 NOTIFICATION_REQUEST_PERMISSIONS
             )
         }
-        val backgroundScope = CoroutineScope(ioDispatcher)
-        backgroundScope.launch {
-            // Initialize the Google Mobile Ads SDK on a background thread.
-            MobileAds.initialize(this@MainActivity) {}
-        }
+
 
 
         var adRequest = AdRequest.Builder().build()

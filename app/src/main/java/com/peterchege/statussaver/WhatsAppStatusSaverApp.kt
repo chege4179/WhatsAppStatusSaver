@@ -16,19 +16,35 @@
 package com.peterchege.statussaver
 
 import android.app.Application
+import com.google.android.gms.ads.MobileAds
+import com.peterchege.statussaver.core.di.IoDispatcher
 import com.peterchege.statussaver.core.firebase.crashlytics.CrashlyticsTree
 import dagger.hilt.android.HiltAndroidApp
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
 
 @HiltAndroidApp
 class WhatsAppStatusSaverApp:Application() {
+
+    @Inject
+    @IoDispatcher
+    lateinit var ioDispatcher: CoroutineDispatcher
 
     override fun onCreate() {
         super.onCreate()
 
         Timber.plant(CrashlyticsTree())
         Timber.plant(Timber.DebugTree())
+
+        val backgroundScope = CoroutineScope(ioDispatcher)
+        backgroundScope.launch {
+            // Initialize the Google Mobile Ads SDK on a background thread.
+            MobileAds.initialize(this@WhatsAppStatusSaverApp) {}
+        }
     }
 
 }
