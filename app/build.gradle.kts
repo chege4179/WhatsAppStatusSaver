@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import com.google.firebase.appdistribution.gradle.firebaseAppDistribution
 import java.util.Properties
 
 
@@ -9,7 +11,6 @@ val keyPasswordString = properties.getProperty("keyPassword") ?: ""
 
 plugins {
     id("com.android.application")
-    kotlin("android")
     kotlin("plugin.serialization")
     kotlin("plugin.parcelize")
     kotlin("plugin.compose")
@@ -30,7 +31,7 @@ secrets {
 
 android {
     namespace = "com.peterchege.statussaver"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.peterchege.statussaver"
@@ -80,9 +81,6 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17.toString()
-    }
     buildFeatures {
         buildConfig = true
         compose = true
@@ -94,16 +92,22 @@ android {
     }
 }
 
+kotlin {
+    compilerOptions {
+        jvmTarget = JvmTarget.JVM_17
+    }
+}
+
 composeCompiler {
     reportsDestination = layout.buildDirectory.dir("compose_compiler")
 }
 
 dependencies {
 
-    implementation(group= "commons-io", name= "commons-io", version= "2.20.0")
-    implementation("androidx.core:core-ktx:1.17.0")
-    implementation("androidx.activity:activity-compose:1.11.0")
-    implementation(platform("androidx.compose:compose-bom:2025.10.00"))
+    implementation("commons-io:commons-io:2.22.0")
+    implementation("androidx.core:core-ktx:1.19.1")
+    implementation("androidx.activity:activity-compose:1.13.0")
+    implementation(platform("androidx.compose:compose-bom:2026.09.00"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
@@ -111,43 +115,42 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.3.0")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.7.0")
-    androidTestImplementation(platform("androidx.compose:compose-bom:2025.10.00"))
+    androidTestImplementation(platform("androidx.compose:compose-bom:2026.09.00"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
     implementation("androidx.compose.material:material-icons-extended:1.7.8")
 
     // view model
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.4")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.9.4")
-    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.9.4")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.9.4")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.11.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.11.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.11.0")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.11.0")
 
     //coroutines
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.11.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.11.0")
 
     // dagger hilt
-    implementation ("com.google.dagger:hilt-android:2.57.2")
-    ksp ("com.google.dagger:hilt-compiler:2.57.2")
+    implementation ("com.google.dagger:hilt-android:2.60.1")
+    ksp ("com.google.dagger:hilt-compiler:2.60.1")
 
-    implementation ("androidx.hilt:hilt-navigation-compose:1.3.0")
-    implementation ("androidx.navigation:navigation-compose:2.9.5")
+    implementation ("androidx.hilt:hilt-lifecycle-viewmodel-compose:1.4.0")
+    implementation ("androidx.navigation:navigation-compose:2.10.2")
 
-    ksp("androidx.hilt:hilt-compiler:1.3.0")
+    ksp("androidx.hilt:hilt-compiler:1.4.0")
 
 
     implementation("com.jakewharton.timber:timber:5.0.1")
 
-    implementation ("androidx.core:core-splashscreen:1.0.1")
+    implementation ("androidx.core:core-splashscreen:1.2.0")
     implementation ("com.google.accompanist:accompanist-permissions:0.37.3")
 
     implementation("io.coil-kt:coil-compose:2.7.0")
     implementation("io.coil-kt:coil-video:2.7.0")
 
-    implementation("androidx.core:core-splashscreen:1.0.1")
 
-    val media3Version = "1.8.0"
+    val media3Version = "1.11.1"
 
     implementation("androidx.media3:media3-exoplayer:$media3Version")
     implementation("androidx.media3:media3-exoplayer-dash:$media3Version")
@@ -159,11 +162,11 @@ dependencies {
 
 
 
-    implementation(platform("com.google.firebase:firebase-bom:34.4.0"))
+    implementation(platform("com.google.firebase:firebase-bom:35.0.0"))
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-crashlytics")
     implementation("com.google.firebase:firebase-perf")
 
 
-    implementation ("com.google.android.gms:play-services-ads:24.7.0")
+    implementation ("com.google.android.gms:play-services-ads:25.5.0")
 }

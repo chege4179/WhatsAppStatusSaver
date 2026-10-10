@@ -89,7 +89,7 @@ class AllVideosScreenViewModel @Inject constructor(
             stopPlayer()
             return
         }
-        val uri =  if (statusFile.isApi30) statusFile.documentFile?.uri else statusFile?.file?.toUri()
+        val uri =  if (statusFile.isApi30) statusFile.documentFile?.uri else statusFile.file?.toUri()
         uri?.let { playVideo(it) }
     }
 

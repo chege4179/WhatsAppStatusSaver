@@ -15,7 +15,6 @@
  */
 package com.peterchege.statussaver.ui.navigation
 
-import android.app.Activity
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -40,7 +39,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
@@ -94,7 +92,6 @@ fun BottomNavigation(
     interstitialAd: InterstitialAd?,
 ) {
     val navController = rememberNavController()
-    val activity = LocalContext.current as Activity
     Scaffold(
         bottomBar = {
             BottomNavBar(

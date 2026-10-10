@@ -72,7 +72,7 @@ class SavedStatusRepositoryImpl @Inject constructor(
                     onSdk29 = {
                         app_dir.listFiles()
                         Timber.tag(TAG).i("Files in APP DIR ${app_dir.listFiles()}")
-                        Timber.tag(TAG).i("Files in APP DIR ${app_dir.listFiles().size}")
+                        Timber.tag(TAG).i("Files in APP DIR ${app_dir.listFiles()?.size}")
                         val f = File(Environment.getExternalStoragePublicDirectory(
                             Environment.DIRECTORY_DCIM
                         ).toString() + File.separator + "status_saver")

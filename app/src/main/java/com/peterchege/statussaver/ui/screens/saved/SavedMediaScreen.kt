@@ -15,8 +15,8 @@
  */
 package com.peterchege.statussaver.ui.screens.saved
 
-import android.app.Activity
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -32,10 +32,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
-import androidx.compose.material3.TabRowDefaults.Indicator
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
+import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -45,12 +44,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.Player
 import com.peterchege.statussaver.R
@@ -75,7 +73,7 @@ fun SavedMediaScreen(
     val activeVideo by viewModel.activeVideo.collectAsStateWithLifecycle()
     val activePhoto by viewModel.activePhoto.collectAsStateWithLifecycle()
 
-    val activity = (LocalContext.current as? Activity)
+    val activity = LocalActivity.current
 
     LaunchedEffect(statusFiles) {
 
@@ -152,15 +150,16 @@ fun SavedMediaScreenContent(
             )
             val scope = rememberCoroutineScope()
 
-            TabRow(
+            SecondaryTabRow(
                 selectedTabIndex = pagerState.currentPage,
                 containerColor = Color.Transparent,
                 contentColor = Color.Transparent,
-                indicator = { tabPositions ->
-                    Indicator(
+                indicator = {
+                    TabRowDefaults.SecondaryIndicator(
                         modifier = Modifier
-                            .tabIndicatorOffset(tabPositions[pagerState.currentPage]),
-                        height = 2.5.dp
+                            .tabIndicatorOffset(pagerState.currentPage),
+                        height = 2.5.dp,
+                        color = MaterialTheme.colorScheme.primary
                     )
                 }
             ) {

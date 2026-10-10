@@ -15,8 +15,8 @@
  */
 package com.peterchege.statussaver.ui.screens.videos
 
-import android.app.Activity
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -39,10 +39,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.Player
 import com.peterchege.statussaver.R
@@ -62,7 +61,7 @@ fun AllVideosScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val player = viewModel.getPlayer()
 
-    val activity = (LocalContext.current as? Activity)
+    val activity = LocalActivity.current
     BackHandler(enabled = uiState.activeVideo != null) {
         if (uiState.activeVideo != null) {
             viewModel.stopPlayer()
